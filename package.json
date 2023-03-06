@@ -32,6 +32,9 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@ionic/core": "^7.0.0-rc.0"
+		"@capacitor/preferences": "^4.0.2",
+		"@ionic/core": "^7.0.0-rc.0",
+		"openai": "^3.2.1",
+		"xstate": "^4.37.0"
 	}
 }
