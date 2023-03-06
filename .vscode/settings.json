@@ -18,7 +18,8 @@
 	"eslint.validate": ["javascript", "typescript", "svelte"],
 	"stylelint.validate": ["css", "postcss", "svelte", "scss"],
 	"cSpell.words": [
-		"OPENAI"
+		"OPENAI",
+		"xstate"
 	],
 
 	// ref: https://github.com/sveltejs/language-tools/issues/650#issuecomment-1181354795

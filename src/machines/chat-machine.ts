@@ -1,9 +1,24 @@
-import { Configuration, OpenAIApi } from 'openai';
+import {
+	ChatCompletionRequestMessageRoleEnum,
+	Configuration,
+	OpenAIApi,
+	type ChatCompletionRequestMessage
+} from 'openai';
 import { assign, createMachine, interpret } from 'xstate';
 import { store } from '~/store/store';
 
-type Context = { openai?: OpenAIApi; model: string };
-type Events = { type: 'INIT_OPENAI'; apiKey: string } | { type: 'CHAT'; input: string };
+type Context = {
+	title?: string;
+	id?: string;
+	openai?: OpenAIApi;
+	model: string;
+	apiKey?: string;
+	messages: ChatCompletionRequestMessage[];
+};
+
+type Events =
+	| { type: 'SET_API_KEY'; apiKey: string }
+	| { type: 'ADD_MESSAGE'; role: ChatCompletionRequestMessageRoleEnum; message: string };
 
 const chatMachine = createMachine(
 	{
@@ -12,38 +27,57 @@ const chatMachine = createMachine(
 			events: {} as Events
 		},
 		id: 'chat',
-		initial: 'idle',
 		context: {
-			model: 'gpt-3.5-turbo'
+			model: 'gpt-3.5-turbo',
+			messages: []
 		},
+		initial: 'idle',
 		states: {
 			idle: {
+				exit: 'setOpenAi',
 				on: {
-					INIT_OPENAI: {
-						actions: 'initOpenAI'
+					SET_API_KEY: {
+						actions: 'setApiKey',
+						target: 'ready'
 					}
 				}
 			},
 			ready: {
 				on: {
-					CHAT: 'chatting'
+					SET_API_KEY: {
+						actions: ['setApiKey', 'setOpenAi']
+					},
+					ADD_MESSAGE: {
+						actions: 'addMessage',
+						target: 'chatting'
+					}
 				}
 			},
 			chatting: {
 				invoke: {
 					id: 'chatting',
-					src: async ({ openai, model }, { input }) => {
-						// // openai?.usage();
-						// if (!openai) {
-						// 	throw new Error('OpenAI not initialized');
-						// }
-						// const response = await openai.createChatCompletion({
-						// 	max_tokens: input,
-						// 	model: model,
-						// 	messages: [{ role: 'user', content: input }],
-						// 	stop: '\n'
-						// });
-						// return '';
+					src:
+						({ openai, model, messages }) =>
+						(callback) => {
+							if (!openai) {
+								throw new Error('OpenAI not initialized');
+							}
+							// openai
+							// 	.createChatCompletion({
+							// 		max_tokens: input,
+							// 		model: model,
+							// 		messages,
+							// 		stop: '\n'
+							// 	})
+							// 	.then((response) => {
+							// 		callback({ type: 'CHAT', input: response.data.choices[0].text });
+							// 	});
+						}
+				},
+				on: {
+					ADD_MESSAGE: {
+						actions: 'addMessage',
+						target: 'ready'
 					}
 				}
 			}
@@ -51,11 +85,26 @@ const chatMachine = createMachine(
 	},
 	{
 		actions: {
-			initOpenAI: assign({
-				openai: (_, event) => {
+			setApiKey: assign({
+				apiKey: (_, event) => {
 					if (!('apiKey' in event)) return;
 					store.set('apiKey', event.apiKey);
-					return new OpenAIApi(new Configuration({ apiKey: event.apiKey }));
+					return event.apiKey;
+				}
+			}),
+			setOpenAi: assign({
+				openai: ({ apiKey }) => {
+					if (!apiKey) return;
+					return new OpenAIApi(new Configuration({ apiKey }));
+				}
+			}),
+			addMessage: assign({
+				messages: ({ messages }, event) => {
+					if (!('message' in event)) return messages;
+					return [
+						...messages,
+						{ role: event.role, content: event.message } as ChatCompletionRequestMessage
+					];
 				}
 			})
 		}

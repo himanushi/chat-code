@@ -2,8 +2,9 @@
 	import type { Components } from '@ionic/core';
 	import { onMount } from 'svelte';
 	import Icon from '~/components/icon.svelte';
-	import RobotChat from './robotChat.svelte';
-	import UserChat from './userChat.svelte';
+	import { chatService } from '~/machines/chat-machine';
+	import RobotChat from './robot-chat.svelte';
+	import UserChat from './user-chat.svelte';
 
 	let contentEle: Components.IonContent | null = null;
 

@@ -1,21 +1,21 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	import Icon from '~/components/icon.svelte';
 	import { chatService } from '~/machines/chat-machine';
-	import { store } from '~/store/store';
+
 	let apiKey: string | undefined = undefined;
 
+	// default value
+	$: if (!apiKey && $chatService?.context.apiKey) {
+		apiKey = $chatService.context.apiKey;
+	}
+
+	// update context
 	$: if (apiKey) {
 		chatService.send({
-			type: 'INIT_OPENAI',
+			type: 'SET_API_KEY',
 			apiKey: apiKey
 		});
 	}
-
-	onMount(async () => {
-		apiKey = await store.get<string>('apiKey');
-	});
 </script>
 
 <ion-content>

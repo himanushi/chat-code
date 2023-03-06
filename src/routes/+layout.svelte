@@ -5,12 +5,21 @@
 	import '~/theme/variables.css';
 	import Menu from './menu.svelte';
 	import Icon from '~/components/icon.svelte';
+	import { store } from '~/store/store';
+	import { chatService } from '~/machines/chat-machine';
 
-	onMount(() => {
+	onMount(async () => {
 		initialize({
 			animated: true,
 			mode: 'ios'
 		});
+		const apiKey = await store.get<string>('apiKey');
+		if (typeof apiKey === 'string') {
+			chatService.send({
+				type: 'SET_API_KEY',
+				apiKey: apiKey
+			});
+		}
 	});
 </script>
 
