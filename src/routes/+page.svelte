@@ -1,2 +1,9 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<ion-app>
+	<ion-header>
+		<ion-toolbar />
+	</ion-header>
+	<ion-content> aaaa </ion-content>
+	<ion-footer>
+		<ion-toolbar />
+	</ion-footer>
+</ion-app>

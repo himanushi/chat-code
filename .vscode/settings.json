@@ -1,0 +1,26 @@
+{
+	// svelte, html, css
+	"css.validate": false,
+	"less.validate": false,
+	"scss.validate": false,
+	"svelte.plugin.css.enable": false,
+	"stylelint.enable": true,
+	"svelte.plugin.svelte.useNewTransformation": false,
+
+	// svelte, javascript, typescript, json
+	"editor.formatOnSave": false,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.codeActionsOnSave": [
+		"source.formatDocument",
+		"source.fixAll.eslint",
+		"source.fixAll.stylelint"
+	],
+	"eslint.validate": ["javascript", "typescript", "svelte"],
+	"stylelint.validate": ["css", "postcss", "svelte", "scss"],
+	"cSpell.words": [],
+
+	// ref: https://github.com/sveltejs/language-tools/issues/650#issuecomment-1181354795
+	"svelte.plugin.svelte.compilerWarnings": {
+		"a11y-click-events-have-key-events": "ignore"
+	}
+}
