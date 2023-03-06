@@ -22,5 +22,24 @@
 	// ref: https://github.com/sveltejs/language-tools/issues/650#issuecomment-1181354795
 	"svelte.plugin.svelte.compilerWarnings": {
 		"a11y-click-events-have-key-events": "ignore"
+	},
+	"html.customData": ["./custom.html-data.json"],
+	"svelte.language-server.customData": {
+		"version": 1,
+		"tags": {
+			"custom-component": {
+				"attributes": [
+					{
+						"name": "prop1",
+						"description": "Description for prop1"
+					},
+					{
+						"name": "prop2",
+						"description": "Description for prop2"
+					}
+				],
+				"description": "Description for custom-component"
+			}
+		}
 	}
 }

@@ -1,12 +1,6 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
 	import '~/theme/custom.css';
 	import '~/theme/variables.css';
-
-	onMount(() => {
-		goto('/chat');
-	});
 </script>
 
 <ion-app>
