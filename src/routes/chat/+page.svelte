@@ -17,15 +17,6 @@
 <ion-content bind:this={contentEle}>
 	<ion-list>
 		<UserChat />
-		<RobotChat />
-		<UserChat />
-		<RobotChat />
-		<UserChat />
-		<RobotChat />
-		<UserChat />
-		<RobotChat />
-		<UserChat />
-		<RobotChat />
 	</ion-list>
 </ion-content>
 <ion-footer>

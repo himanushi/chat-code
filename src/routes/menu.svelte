@@ -2,7 +2,7 @@
 	import Icon from '~/components/icon.svelte';
 </script>
 
-<ion-menu content-id="menu-content">
+<ion-menu content-id="menu">
 	<ion-header>
 		<ion-toolbar>
 			<ion-buttons slot="start">
@@ -14,17 +14,14 @@
 			</ion-buttons>
 			<ion-title>Menu</ion-title>
 		</ion-toolbar>
-		<ion-menu-toggle>
-			<ion-card color="gray" button>
+		<ion-menu-toggle auto-hide={false}>
+			<ion-card color="gray" button href="/chat">
 				<ion-card-content> + New Chat </ion-card-content>
 			</ion-card>
 		</ion-menu-toggle>
 	</ion-header>
 	<ion-content>
-		<ion-menu-toggle>
-			<ion-item button href="/chat"> Chat </ion-item>
-			<ion-item button href="/chat"> Chat </ion-item>
-			<ion-item button href="/chat"> Chat </ion-item>
+		<ion-menu-toggle auto-hide={false}>
 			<ion-item button href="/chat"> Chat </ion-item>
 		</ion-menu-toggle>
 	</ion-content>
@@ -33,7 +30,7 @@
 			<ion-list-header>
 				<ion-label>Settings</ion-label>
 			</ion-list-header>
-			<ion-menu-toggle>
+			<ion-menu-toggle auto-hide={false}>
 				<ion-item button href="/me">
 					<Icon name="person" size="s" fill />
 					<ion-label>My Account</ion-label>

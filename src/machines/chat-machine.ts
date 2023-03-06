@@ -33,17 +33,17 @@ const chatMachine = createMachine(
 				invoke: {
 					id: 'chatting',
 					src: async ({ openai, model }, { input }) => {
-						// openai?.usage();
-						if (!openai) {
-							throw new Error('OpenAI not initialized');
-						}
-						const response = await openai.createChatCompletion({
-							max_tokens: input,
-							model: model,
-							messages: [{ role: 'user', content: input }],
-							stop: '\n'
-						});
-						return '';
+						// // openai?.usage();
+						// if (!openai) {
+						// 	throw new Error('OpenAI not initialized');
+						// }
+						// const response = await openai.createChatCompletion({
+						// 	max_tokens: input,
+						// 	model: model,
+						// 	messages: [{ role: 'user', content: input }],
+						// 	stop: '\n'
+						// });
+						// return '';
 					}
 				}
 			}
