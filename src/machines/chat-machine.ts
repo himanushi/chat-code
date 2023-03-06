@@ -4,11 +4,10 @@ import {
 	OpenAIApi,
 	type ChatCompletionRequestMessage
 } from 'openai';
-import { assign, createMachine, interpret } from 'xstate';
+import { assign, createMachine } from 'xstate';
 import { store } from '~/store/store';
 
 type Context = {
-	title?: string;
 	id?: string;
 	openai?: OpenAIApi;
 	model: string;
@@ -17,10 +16,11 @@ type Context = {
 };
 
 type Events =
+	| { type: 'SET_ID'; id: string }
 	| { type: 'SET_API_KEY'; apiKey: string }
 	| { type: 'ADD_MESSAGE'; role: ChatCompletionRequestMessageRoleEnum; message: string };
 
-const chatMachine = createMachine(
+export const chatMachine = createMachine(
 	{
 		schema: {
 			context: {} as Context,
@@ -110,5 +110,3 @@ const chatMachine = createMachine(
 		}
 	}
 );
-
-export const chatService = interpret(chatMachine).start();

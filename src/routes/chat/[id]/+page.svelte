@@ -1,25 +1,34 @@
 <script lang="ts">
 	import type { Components } from '@ionic/core';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import Icon from '~/components/icon.svelte';
-	import { chatService } from '~/machines/chat-machine';
+	import { chatMachine } from '~/machines/chat-machine';
 	import RobotChat from './robot-chat.svelte';
 	import UserChat from './user-chat.svelte';
 	import type { PageData } from './$types';
-
-	let contentEle: Components.IonContent | null = null;
+	import { interpret } from 'xstate';
 
 	export let data: PageData;
+
+	const chatService = interpret(chatMachine);
+
 	$: id = data.id;
 	$: if (id) {
-		console.log(id);
+		chatService;
 	}
 
+	let contentEle: Components.IonContent | null = null;
 	onMount(() => {
+		chatService.start();
+
 		// scroll to bottom
 		contentEle?.getScrollElement().then((ele) => {
 			ele.scrollTo({ top: ele.scrollHeight });
 		});
+	});
+
+	onDestroy(() => {
+		chatService.stop();
 	});
 </script>
 

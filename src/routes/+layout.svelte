@@ -6,20 +6,24 @@
 	import Menu from './menu.svelte';
 	import Icon from '~/components/icon.svelte';
 	import { store } from '~/store/store';
-	import { chatService } from '~/machines/chat-machine';
+	import { chatList, chatListStoreId, type ChatListType } from '~/store/chatList';
+	import { apiKey, apiKeyStoreId } from '~/store/apiKey';
 
 	onMount(async () => {
+		// initialize Ionic
 		initialize({
 			animated: true,
 			mode: 'ios'
 		});
-		const apiKey = await store.get<string>('apiKey');
-		if (typeof apiKey === 'string') {
-			chatService.send({
-				type: 'SET_API_KEY',
-				apiKey: apiKey
-			});
+
+		// get API key from storage
+		const key = await store.get<string>(apiKeyStoreId);
+		if (typeof key === 'string') {
+			apiKey.update(key);
 		}
+
+		// set chat list from storage
+		chatList.remember(await store.get(chatListStoreId));
 	});
 </script>
 

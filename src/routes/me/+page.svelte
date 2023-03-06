@@ -1,20 +1,10 @@
 <script lang="ts">
 	import Icon from '~/components/icon.svelte';
-	import { chatService } from '~/machines/chat-machine';
+	import { apiKey } from '~/store/apiKey';
 
-	let apiKey: string | undefined = undefined;
-
-	// default value
-	$: if (!apiKey && $chatService?.context.apiKey) {
-		apiKey = $chatService.context.apiKey;
-	}
-
-	// update context
-	$: if (apiKey) {
-		chatService.send({
-			type: 'SET_API_KEY',
-			apiKey: apiKey
-		});
+	let key: string | undefined = undefined;
+	$: if (!key && $apiKey) {
+		key = $apiKey;
 	}
 </script>
 
@@ -29,10 +19,11 @@
 			<ion-input
 				type="password"
 				placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-				value={apiKey}
-				on:ionChange={(e) => {
+				value={key}
+				on:ionChange={async (e) => {
 					if (typeof e.target.value === 'string') {
-						apiKey = e.target.value;
+						key = e.target.value;
+						apiKey.update(key);
 					}
 				}}
 			/>
