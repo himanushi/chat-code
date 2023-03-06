@@ -3,8 +3,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import Icon from '~/components/icon.svelte';
 	import { chatMachine } from '~/machines/chat-machine';
-	import RobotChat from './robot-chat.svelte';
-	import UserChat from './user-chat.svelte';
+	import ChatItem from './chat-item.svelte';
 	import type { PageData } from './$types';
 	import { interpret } from 'xstate';
 	import { apiKey } from '~/store/apiKey';
@@ -43,13 +42,14 @@
 {#if $apiKey && $chatService}
 	<ion-content bind:this={contentEle}>
 		<ion-list>
-			{#each $chatService?.context?.messages ?? [] as message}
-				{#if message.role === 'assistant'}
-					<RobotChat {message} />
-				{:else if message.role === 'user'}
-					<UserChat {message} />
-				{/if}
+			{#each $chatService.context.messages as message, index}
+				<ChatItem {message} />
 			{/each}
+			<ion-item>
+				<ion-note>
+					{$chatService.context.usage.total_tokens} Tokens used
+				</ion-note>
+			</ion-item>
 		</ion-list>
 	</ion-content>
 	<ion-footer>

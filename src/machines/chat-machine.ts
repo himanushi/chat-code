@@ -2,7 +2,8 @@ import {
 	ChatCompletionRequestMessageRoleEnum,
 	Configuration,
 	OpenAIApi,
-	type ChatCompletionRequestMessage
+	type ChatCompletionRequestMessage,
+	type CreateCompletionResponseUsage
 } from 'openai';
 import { assign, createMachine } from 'xstate';
 
@@ -12,11 +13,13 @@ type Context = {
 	model: string;
 	apiKey?: string;
 	messages: ChatCompletionRequestMessage[];
+	usage: CreateCompletionResponseUsage;
 };
 
 type Events =
 	| { type: 'INIT'; id: string; apiKey: string }
-	| { type: 'ADD_MESSAGE'; role: ChatCompletionRequestMessageRoleEnum; message: string };
+	| { type: 'ADD_MESSAGE'; role: ChatCompletionRequestMessageRoleEnum; message: string }
+	| { type: 'ADD_USAGE'; usage: CreateCompletionResponseUsage | undefined };
 
 export const chatMachine = createMachine(
 	{
@@ -27,7 +30,8 @@ export const chatMachine = createMachine(
 		id: 'chat',
 		context: {
 			model: 'gpt-3.5-turbo',
-			messages: []
+			messages: [],
+			usage: { completion_tokens: 0, prompt_tokens: 0, total_tokens: 0 }
 		},
 		initial: 'idle',
 		states: {
@@ -53,26 +57,34 @@ export const chatMachine = createMachine(
 					src:
 						({ openai, model, messages }) =>
 						(callback) => {
-							console.log({ openai });
 							if (!openai) {
 								throw new Error('OpenAI not initialized');
 							}
-							// openai
-							// 	.createChatCompletion({
-							// 		max_tokens: input,
-							// 		model: model,
-							// 		messages,
-							// 		stop: '\n'
-							// 	})
-							// 	.then((response) => {
-							// 		callback({ type: 'CHAT', input: response.data.choices[0].text });
-							// 	});
+							openai
+								.createChatCompletion({
+									model: model,
+									messages
+								})
+								.then((response) => {
+									callback({
+										type: 'ADD_USAGE',
+										usage: response.data.usage
+									});
+									callback({
+										type: 'ADD_MESSAGE',
+										role: 'assistant',
+										message: response.data.choices[0].message?.content ?? ''
+									});
+								});
 						}
 				},
 				on: {
 					ADD_MESSAGE: {
 						actions: 'addMessage',
 						target: 'ready'
+					},
+					ADD_USAGE: {
+						actions: 'addUsage'
 					}
 				}
 			}
@@ -99,6 +111,16 @@ export const chatMachine = createMachine(
 						...messages,
 						{ role: event.role, content: event.message } as ChatCompletionRequestMessage
 					];
+				}
+			}),
+			addUsage: assign({
+				usage: ({ usage }, event) => {
+					if (!('usage' in event)) return usage;
+					return {
+						completion_tokens: event.usage?.completion_tokens ?? 0,
+						prompt_tokens: event.usage?.prompt_tokens ?? 0,
+						total_tokens: event.usage?.total_tokens ?? 0
+					};
 				}
 			})
 		}
