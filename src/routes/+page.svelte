@@ -2,7 +2,7 @@
 	<ion-header>
 		<ion-toolbar />
 	</ion-header>
-	<ion-content> aaaa </ion-content>
+	<ion-content> aaaaaaa </ion-content>
 	<ion-footer>
 		<ion-toolbar />
 	</ion-footer>
