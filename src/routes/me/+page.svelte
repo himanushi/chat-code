@@ -1,6 +1,21 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
 	import Icon from '~/components/icon.svelte';
-	let apiKey: string | number | null | undefined = undefined;
+	import { chatService } from '~/machines/chat-machine';
+	import { store } from '~/store/store';
+	let apiKey: string | undefined = undefined;
+
+	$: if (apiKey) {
+		chatService.send({
+			type: 'INIT_OPENAI',
+			apiKey: apiKey
+		});
+	}
+
+	onMount(async () => {
+		apiKey = await store.get<string>('apiKey');
+	});
 </script>
 
 <ion-content>
@@ -15,7 +30,11 @@
 				type="password"
 				placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 				value={apiKey}
-				on:ionChange={(e) => (apiKey = e.target.value)}
+				on:ionChange={(e) => {
+					if (typeof e.target.value === 'string') {
+						apiKey = e.target.value;
+					}
+				}}
 			/>
 		</ion-item>
 	</ion-list>
