@@ -1,20 +1,31 @@
 <script lang="ts">
+	import type { Components } from '@ionic/core';
 	import { onMount } from 'svelte';
 	import Icon from '~/components/icon.svelte';
-	let contentEle: HTMLIonContentElement | null = null;
+	import RobotChat from './robotChat.svelte';
+	import UserChat from './userChat.svelte';
 
-	onMount(() => {});
+	let contentEle: Components.IonContent | null = null;
+
+	onMount(() => {
+		contentEle?.getScrollElement().then((ele) => {
+			ele.scrollTo({ top: ele.scrollHeight });
+		});
+	});
 </script>
 
 <ion-content bind:this={contentEle}>
 	<ion-list>
-		<ion-item>
-			<Icon name="smart_toy" fill color="green" start />
-			<ion-label class="ion-text-wrap" />
-		</ion-item>
-		<ion-item>
-			<Icon name="person" fill color="blue" start />
-		</ion-item>
+		<UserChat />
+		<RobotChat />
+		<UserChat />
+		<RobotChat />
+		<UserChat />
+		<RobotChat />
+		<UserChat />
+		<RobotChat />
+		<UserChat />
+		<RobotChat />
 	</ion-list>
 </ion-content>
 <ion-footer>
