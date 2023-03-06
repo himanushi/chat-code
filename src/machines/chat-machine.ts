@@ -1,22 +1,22 @@
 import { Configuration, OpenAIApi } from 'openai';
 import { assign, createMachine } from 'xstate';
 
-// OpenAI APIの認証情報
-// const OPENAI_API_KEY = 'your-api-key-here';
-const OPENAI_MODEL = 'gpt-3.5-turbo';
-
 export const Models = ['gpt-3.5-turbo', 'gpt-3.5', 'gpt-3.4', 'gpt-3.3'];
 
-// XStateの状態マシン定義
 const chatMachine = createMachine(
 	{
 		schema: {
 			context: {} as { openai?: OpenAIApi; model: string },
-			events: {} as { type: 'INIT_OPENAI'; apiKey: string }
+			events: {} as
+				| { type: 'INIT_OPENAI'; apiKey: string }
+				| { type: 'SET_MODEL'; model: string }
+				| { type: 'CHAT'; input: string }
 		},
 		id: 'chat',
 		initial: 'idle',
-		context: {},
+		context: {
+			model: Models[0]
+		},
 		states: {
 			idle: {
 				on: {
