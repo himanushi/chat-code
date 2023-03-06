@@ -5,7 +5,6 @@ import {
 	type ChatCompletionRequestMessage
 } from 'openai';
 import { assign, createMachine } from 'xstate';
-import { store } from '~/store/store';
 
 type Context = {
 	id?: string;
@@ -16,8 +15,7 @@ type Context = {
 };
 
 type Events =
-	| { type: 'SET_ID'; id: string }
-	| { type: 'SET_API_KEY'; apiKey: string }
+	| { type: 'INIT'; id: string; apiKey: string }
 	| { type: 'ADD_MESSAGE'; role: ChatCompletionRequestMessageRoleEnum; message: string };
 
 export const chatMachine = createMachine(
@@ -34,19 +32,15 @@ export const chatMachine = createMachine(
 		initial: 'idle',
 		states: {
 			idle: {
-				exit: 'setOpenAi',
 				on: {
-					SET_API_KEY: {
-						actions: 'setApiKey',
+					INIT: {
+						actions: ['setId', 'setApiKey', 'setOpenAi'],
 						target: 'ready'
 					}
 				}
 			},
 			ready: {
 				on: {
-					SET_API_KEY: {
-						actions: ['setApiKey', 'setOpenAi']
-					},
 					ADD_MESSAGE: {
 						actions: 'addMessage',
 						target: 'chatting'
@@ -59,6 +53,7 @@ export const chatMachine = createMachine(
 					src:
 						({ openai, model, messages }) =>
 						(callback) => {
+							console.log({ openai });
 							if (!openai) {
 								throw new Error('OpenAI not initialized');
 							}
@@ -86,11 +81,10 @@ export const chatMachine = createMachine(
 	{
 		actions: {
 			setApiKey: assign({
-				apiKey: (_, event) => {
-					if (!('apiKey' in event)) return;
-					store.set('apiKey', event.apiKey);
-					return event.apiKey;
-				}
+				apiKey: (_, event) => ('apiKey' in event ? event.apiKey : undefined)
+			}),
+			setId: assign({
+				id: (_, event) => ('id' in event ? event.id : undefined)
 			}),
 			setOpenAi: assign({
 				openai: ({ apiKey }) => {

@@ -9,14 +9,20 @@
 	import { interpret } from 'xstate';
 	import { apiKey } from '~/store/apiKey';
 	import { goto } from '$app/navigation';
+	import { matches } from '~/lib/matches';
 
 	export let data: PageData;
 
+	let message = '';
 	const chatService = interpret(chatMachine);
+	const send = () => {
+		chatService.send('ADD_MESSAGE', { message, role: 'user' });
+		message = '';
+	};
 
 	$: id = data.id;
-	$: if (id && $apiKey) {
-		chatService;
+	$: if (id && $apiKey && $chatService && matches($chatService, ['idle'])) {
+		chatService.send('INIT', { id, apiKey: $apiKey });
 	}
 
 	let contentEle: Components.IonContent | null = null;
@@ -34,7 +40,7 @@
 	});
 </script>
 
-{#if $apiKey}
+{#if $apiKey && $chatService}
 	<ion-content bind:this={contentEle}>
 		<ion-list>
 			{#each $chatService?.context?.messages ?? [] as message}
@@ -53,11 +59,25 @@
 					<Icon name="person" fill color="blue" />
 				</ion-button>
 			</ion-buttons>
-			<ion-textarea rows={1} auto-grow={true} placeholder="Type a message" />
+			<ion-textarea
+				rows={1}
+				auto-grow={true}
+				placeholder="Type a message"
+				value={message}
+				on:ionChange={(e) => {
+					if (e.detail.value || e.detail.value === '') message = e.detail.value;
+				}}
+			/>
 			<ion-buttons slot="end">
-				<ion-button>
-					<Icon name="send" fill color="white" />
-				</ion-button>
+				{#if matches($chatService, ['chatting'])}
+					<ion-button disabled>
+						<ion-spinner name="dots" />
+					</ion-button>
+				{:else}
+					<ion-button disabled={matches($chatService, ['idle']) || !message} on:click={send}>
+						<Icon name="send" fill color="white" />
+					</ion-button>
+				{/if}
 			</ion-buttons>
 		</ion-toolbar>
 	</ion-footer>
@@ -65,7 +85,7 @@
 	<ion-content>
 		<ion-item button on:click={() => goto('/me')}>
 			<Icon fill name="warning" color="yellow" start />
-			<ion-label> API key を設定してください</ion-label>
+			<ion-label> API Key を設定してください</ion-label>
 		</ion-item>
 	</ion-content>
 {/if}
