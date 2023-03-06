@@ -14,9 +14,17 @@
 			</ion-buttons>
 			<ion-title>Menu</ion-title>
 		</ion-toolbar>
+		<ion-menu-toggle>
+			<ion-card color="gray" button>
+				<ion-card-content> + New Chat </ion-card-content>
+			</ion-card>
+		</ion-menu-toggle>
 	</ion-header>
 	<ion-content>
 		<ion-menu-toggle>
+			<ion-item button href="/chat"> Chat </ion-item>
+			<ion-item button href="/chat"> Chat </ion-item>
+			<ion-item button href="/chat"> Chat </ion-item>
 			<ion-item button href="/chat"> Chat </ion-item>
 		</ion-menu-toggle>
 	</ion-content>
