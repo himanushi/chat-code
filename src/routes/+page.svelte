@@ -3,6 +3,6 @@
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		goto('/chat');
+		goto('/me');
 	});
 </script>

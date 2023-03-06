@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-
+	import { v4 as uuid } from 'uuid';
 	import Icon from '~/components/icon.svelte';
 </script>
 
@@ -17,17 +17,17 @@
 			<ion-title>Menu</ion-title>
 		</ion-toolbar>
 		<ion-menu-toggle auto-hide={false}>
-			<ion-card color="gray" button on:click={() => goto('/chat')}>
+			<ion-card color="gray" button on:click={() => goto(`/chat/${uuid()}`)}>
 				<ion-card-content> + New Chat </ion-card-content>
 			</ion-card>
 		</ion-menu-toggle>
 	</ion-header>
 	<ion-content>
 		<ion-menu-toggle auto-hide={false}>
-			<ion-item button on:click={() => goto('/chat')}>
+			<!-- <ion-item button on:click={() => goto('/chat')}>
 				<Icon name="chat" fill size="s" />
 				<ion-label> Chat </ion-label>
-			</ion-item>
+			</ion-item> -->
 		</ion-menu-toggle>
 	</ion-content>
 	<ion-footer>
