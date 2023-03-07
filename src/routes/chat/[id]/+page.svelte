@@ -24,7 +24,12 @@
 		: 0;
 	$: id = data.id;
 	$: if (id && $apiKey && $chatService && matches($chatService, ['idle'])) {
-		chatService.send('INIT', { id, apiKey: $apiKey });
+		chatService.send({ type: 'SET_API_TOKEN', apiKey: $apiKey });
+		chatService.send({ type: 'SET_ID', id });
+		chatService.send('INIT');
+	}
+	$: if (id) {
+		chatService.send({ type: 'SET_ID', id });
 	}
 
 	$: if ($chatService && $chatService.context.messages) {

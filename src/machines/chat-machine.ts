@@ -18,7 +18,9 @@ type Context = {
 };
 
 type Events =
-	| { type: 'INIT'; id: string; apiKey: string }
+	| { type: 'INIT' }
+	| { type: 'SET_API_TOKEN'; apiKey: string }
+	| { type: 'SET_ID'; id: string }
 	| { type: 'ADD_MESSAGES'; messages: ChatCompletionRequestMessage[] }
 	| { type: 'ADD_USAGES'; usages: CreateCompletionResponseUsage[] };
 
@@ -38,8 +40,10 @@ export const chatMachine = createMachine(
 		states: {
 			idle: {
 				on: {
+					SET_API_TOKEN: { actions: 'setApiKey' },
+					SET_ID: { actions: 'setId' },
 					INIT: {
-						actions: ['setId', 'setApiKey', 'setOpenAi'],
+						actions: 'setOpenAi',
 						target: 'initializing'
 					}
 				}
