@@ -4,7 +4,7 @@
 	import Icon from '~/components/icon.svelte';
 </script>
 
-<ion-menu content-id="menu">
+<ion-menu content-id="menu" max-edge-start={0}>
 	<ion-header>
 		<ion-toolbar>
 			<ion-buttons slot="start">

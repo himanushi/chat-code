@@ -1,9 +1,10 @@
 import { writable } from 'svelte/store';
 import { store } from './store';
-import type { ChatCompletionRequestMessage } from 'openai';
+import type { ChatCompletionRequestMessage, CreateCompletionResponseUsage } from 'openai';
 
 export type ContentType = {
 	messages: ChatCompletionRequestMessage[];
+	usages: CreateCompletionResponseUsage[];
 };
 
 export type ChatListType = {

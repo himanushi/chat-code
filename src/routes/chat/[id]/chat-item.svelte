@@ -12,5 +12,7 @@
 
 <ion-item color={itemColor} lines="none">
 	<Icon name={icon} fill color={iconColor} start />
-	<ion-label class="ion-text-wrap">{@html markdown(message.content)}</ion-label>
+</ion-item>
+<ion-item color={itemColor} lines="none">
+	<ion-label class="ion-text-wrap text-select">{@html markdown(message.content)}</ion-label>
 </ion-item>

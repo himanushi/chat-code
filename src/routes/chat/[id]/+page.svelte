@@ -27,14 +27,15 @@
 		chatService.send('INIT', { id, apiKey: $apiKey });
 	}
 
-	let contentEle: Components.IonContent | null = null;
-	onMount(() => {
-		chatService.start();
-
-		// scroll to bottom
+	$: if ($chatService && $chatService.context.messages) {
 		contentEle?.getScrollElement().then((ele) => {
 			ele.scrollTo({ top: ele.scrollHeight });
 		});
+	}
+
+	let contentEle: Components.IonContent | null = null;
+	onMount(() => {
+		chatService.start();
 	});
 
 	onDestroy(() => {
