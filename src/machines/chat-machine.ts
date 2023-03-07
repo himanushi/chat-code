@@ -1,11 +1,12 @@
 import {
-	ChatCompletionRequestMessageRoleEnum,
 	Configuration,
 	OpenAIApi,
 	type ChatCompletionRequestMessage,
 	type CreateCompletionResponseUsage
 } from 'openai';
 import { assign, createMachine } from 'xstate';
+import { chatListStoreId, type ChatListType } from '~/store/chatList';
+import { store } from '~/store/store';
 
 type Context = {
 	id?: string;
@@ -18,8 +19,8 @@ type Context = {
 
 type Events =
 	| { type: 'INIT'; id: string; apiKey: string }
-	| { type: 'ADD_MESSAGE'; role: ChatCompletionRequestMessageRoleEnum; message: string }
-	| { type: 'ADD_USAGE'; usage: CreateCompletionResponseUsage | undefined };
+	| { type: 'ADD_MESSAGES'; messages: ChatCompletionRequestMessage[] }
+	| { type: 'ADD_USAGES'; usages: CreateCompletionResponseUsage[] };
 
 export const chatMachine = createMachine(
 	{
@@ -39,21 +40,43 @@ export const chatMachine = createMachine(
 				on: {
 					INIT: {
 						actions: ['setId', 'setApiKey', 'setOpenAi'],
-						target: 'ready'
+						target: 'initializing'
 					}
+				}
+			},
+			initializing: {
+				invoke: {
+					src:
+						({ id }) =>
+						(callback) => {
+							(async () => {
+								const chatList = await store.get<ChatListType>(chatListStoreId);
+								if (id && chatList) {
+									const messages = chatList[id].messages ?? [];
+									const usages = chatList[id].usages ?? [];
+									callback({ type: 'ADD_MESSAGES', messages });
+									callback({ type: 'ADD_USAGES', usages });
+								}
+								callback('INIT');
+							})();
+						}
+				},
+				on: {
+					ADD_MESSAGES: { actions: 'addMessages' },
+					ADD_USAGES: { actions: 'addUsages' },
+					INIT: 'ready'
 				}
 			},
 			ready: {
 				on: {
-					ADD_MESSAGE: {
-						actions: 'addMessage',
+					ADD_MESSAGES: {
+						actions: 'addMessages',
 						target: 'chatting'
 					}
 				}
 			},
 			chatting: {
 				invoke: {
-					id: 'chatting',
 					src:
 						({ openai, model, messages }) =>
 						(callback) => {
@@ -66,26 +89,28 @@ export const chatMachine = createMachine(
 									messages
 								})
 								.then((response) => {
-									callback({
-										type: 'ADD_USAGE',
-										usage: response.data.usage
-									});
-									callback({
-										type: 'ADD_MESSAGE',
-										role: 'assistant',
-										message: response.data.choices[0].message?.content ?? ''
-									});
+									if (response.data.usage) {
+										callback({
+											type: 'ADD_USAGES',
+											usages: [response.data.usage]
+										});
+									}
+									const content = response.data.choices[0].message?.content;
+									if (content) {
+										callback({
+											type: 'ADD_MESSAGES',
+											messages: [{ role: 'assistant', content }]
+										});
+									}
 								});
 						}
 				},
 				on: {
-					ADD_MESSAGE: {
-						actions: 'addMessage',
+					ADD_MESSAGES: {
+						actions: 'addMessages',
 						target: 'ready'
 					},
-					ADD_USAGE: {
-						actions: 'addUsage'
-					}
+					ADD_USAGES: { actions: 'addUsages' }
 				}
 			}
 		}
@@ -104,26 +129,17 @@ export const chatMachine = createMachine(
 					return new OpenAIApi(new Configuration({ apiKey }));
 				}
 			}),
-			addMessage: assign({
+			addMessages: assign({
 				messages: ({ messages }, event) => {
-					if (!('message' in event)) return messages;
-					return [
-						...messages,
-						{ role: event.role, content: event.message } as ChatCompletionRequestMessage
-					];
+					console.log({ event });
+					if (!('messages' in event)) return messages;
+					return [...messages, ...event.messages];
 				}
 			}),
-			addUsage: assign({
+			addUsages: assign({
 				usages: ({ usages }, event) => {
-					if (!('usage' in event)) return usages;
-					return [
-						...usages,
-						{
-							completion_tokens: event.usage?.completion_tokens ?? 0,
-							prompt_tokens: event.usage?.prompt_tokens ?? 0,
-							total_tokens: event.usage?.total_tokens ?? 0
-						}
-					];
+					if (!('usages' in event)) return usages;
+					return [...usages, ...event.usages];
 				}
 			})
 		}

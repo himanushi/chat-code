@@ -15,7 +15,7 @@
 	let message = '';
 	const chatService = interpret(chatMachine);
 	const send = () => {
-		chatService.send('ADD_MESSAGE', { message, role: 'user' });
+		chatService.send({ type: 'ADD_MESSAGES', messages: [{ content: message, role: 'user' }] });
 		message = '';
 	};
 
