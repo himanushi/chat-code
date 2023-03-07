@@ -48,9 +48,15 @@
 			{#each $chatService.context.messages as message, index}
 				<ChatItem {message} />
 			{/each}
-			<ion-item>
+			{#if matches($chatService, ['chatting'])}
+				<ion-item color="dark-gray" lines="none">
+					<Icon name="smart_toy" color="green" fill start />
+					<ion-spinner name="bubbles" />
+				</ion-item>
+			{/if}
+			<ion-item lines="none">
 				<ion-note>
-					{tokens} Tokens used, {tokens * 0.000002} $
+					{tokens} Tokens used, {tokens * 0.000002 * 135} 円
 				</ion-note>
 			</ion-item>
 		</ion-list>
@@ -74,7 +80,7 @@
 			<ion-buttons slot="end">
 				{#if matches($chatService, ['chatting'])}
 					<ion-button disabled>
-						<ion-spinner name="dots" />
+						<ion-spinner name="bubbles" />
 					</ion-button>
 				{:else}
 					<ion-button disabled={matches($chatService, ['idle']) || !message} on:click={send}>
