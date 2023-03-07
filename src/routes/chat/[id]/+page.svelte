@@ -32,7 +32,7 @@
 		chatService.send({ type: 'SET_ID', id });
 	}
 
-	$: if ($chatService && $chatService.context.messages) {
+	$: if ($chatService && $chatService.context.messages.length) {
 		contentEle?.getScrollElement().then((ele) => {
 			ele.scrollTo({ top: ele.scrollHeight });
 		});

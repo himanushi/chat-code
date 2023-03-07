@@ -5,7 +5,7 @@ import {
 	type CreateCompletionResponseUsage
 } from 'openai';
 import { assign, createMachine } from 'xstate';
-import { chatListStoreId, type ChatListType } from '~/store/chatList';
+import { chatList, chatListStoreId, type ChatListType } from '~/store/chatList';
 import { store } from '~/store/store';
 
 type Context = {
@@ -21,6 +21,7 @@ type Events =
 	| { type: 'INIT' }
 	| { type: 'SET_API_TOKEN'; apiKey: string }
 	| { type: 'SET_ID'; id: string }
+	| { type: 'RESET' }
 	| { type: 'ADD_MESSAGES'; messages: ChatCompletionRequestMessage[] }
 	| { type: 'ADD_USAGES'; usages: CreateCompletionResponseUsage[] };
 
@@ -37,15 +38,13 @@ export const chatMachine = createMachine(
 			usages: []
 		},
 		initial: 'idle',
+		on: { SET_ID: { actions: 'setId', target: 'initializing' } },
 		states: {
 			idle: {
 				on: {
-					SET_API_TOKEN: { actions: 'setApiKey' },
+					SET_API_TOKEN: { actions: ['setApiKey', 'setOpenAi'] },
 					SET_ID: { actions: 'setId' },
-					INIT: {
-						actions: 'setOpenAi',
-						target: 'initializing'
-					}
+					INIT: 'initializing'
 				}
 			},
 			initializing: {
@@ -54,12 +53,18 @@ export const chatMachine = createMachine(
 						({ id }) =>
 						(callback) => {
 							(async () => {
-								const chatList = await store.get<ChatListType>(chatListStoreId);
-								if (id && chatList) {
-									const messages = chatList[id].messages ?? [];
-									const usages = chatList[id].usages ?? [];
+								const cList = (await store.get<ChatListType>(chatListStoreId)) ?? [];
+								const chat = cList.find((item) => item.id === id);
+								callback('RESET');
+								if (chat) {
+									const { messages, usages } = chat.content;
 									callback({ type: 'ADD_MESSAGES', messages });
 									callback({ type: 'ADD_USAGES', usages });
+								} else if (id) {
+									chatList.add({
+										id,
+										content: { messages: [], usages: [] }
+									});
 								}
 								callback('INIT');
 							})();
@@ -68,7 +73,8 @@ export const chatMachine = createMachine(
 				on: {
 					ADD_MESSAGES: { actions: 'addMessages' },
 					ADD_USAGES: { actions: 'addUsages' },
-					INIT: 'ready'
+					INIT: 'ready',
+					RESET: { actions: 'reset' }
 				}
 			},
 			ready: {
@@ -82,7 +88,7 @@ export const chatMachine = createMachine(
 			chatting: {
 				invoke: {
 					src:
-						({ openai, model, messages }) =>
+						({ id, openai, model, messages, usages }) =>
 						(callback) => {
 							if (!openai) {
 								throw new Error('OpenAI not initialized');
@@ -93,17 +99,21 @@ export const chatMachine = createMachine(
 									messages
 								})
 								.then((response) => {
-									if (response.data.usage) {
+									const content = response.data.choices[0].message?.content;
+									const usage = response.data.usage;
+									if (content && usage && id) {
+										const message = { role: 'assistant', content } as ChatCompletionRequestMessage;
 										callback({
 											type: 'ADD_USAGES',
-											usages: [response.data.usage]
+											usages: [usage]
 										});
-									}
-									const content = response.data.choices[0].message?.content;
-									if (content) {
 										callback({
 											type: 'ADD_MESSAGES',
-											messages: [{ role: 'assistant', content }]
+											messages: [message]
+										});
+										chatList.update(id, {
+											messages: [...messages, message],
+											usages: [...usages, usage]
 										});
 									}
 								});
@@ -135,7 +145,6 @@ export const chatMachine = createMachine(
 			}),
 			addMessages: assign({
 				messages: ({ messages }, event) => {
-					console.log({ event });
 					if (!('messages' in event)) return messages;
 					return [...messages, ...event.messages];
 				}
@@ -145,6 +154,10 @@ export const chatMachine = createMachine(
 					if (!('usages' in event)) return usages;
 					return [...usages, ...event.usages];
 				}
+			}),
+			reset: assign({
+				usages: () => [],
+				messages: () => []
 			})
 		}
 	}

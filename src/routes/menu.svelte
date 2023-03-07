@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { v4 as uuid } from 'uuid';
 	import Icon from '~/components/icon.svelte';
+	import { chatList } from '~/store/chatList';
 </script>
 
 <ion-menu content-id="menu" max-edge-start={0}>
@@ -24,10 +25,12 @@
 	</ion-header>
 	<ion-content>
 		<ion-menu-toggle auto-hide={false}>
-			<!-- <ion-item button on:click={() => goto('/chat')}>
-				<Icon name="chat" fill size="s" />
-				<ion-label> Chat </ion-label>
-			</ion-item> -->
+			{#each $chatList ?? [] as chat}
+				<ion-item button on:click={() => goto(`/chat/${chat.id}`)}>
+					<Icon name="chat" fill size="s" />
+					<ion-label> {chat.id} </ion-label>
+				</ion-item>
+			{/each}
 		</ion-menu-toggle>
 	</ion-content>
 	<ion-footer>

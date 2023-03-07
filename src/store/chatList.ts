@@ -7,29 +7,48 @@ export type ContentType = {
 	usages: CreateCompletionResponseUsage[];
 };
 
-export type ChatListType = {
-	[key: string]: ContentType;
+export type ChatType = {
+	id: string;
+	content: ContentType;
 };
+
+export type ChatListType = ChatType[];
 
 export const chatListStoreId = 'chatList';
 
 const createChatList = () => {
-	const { subscribe, update } = writable<ChatListType>({});
+	const { subscribe, update } = writable<ChatListType>([]);
 
 	return {
 		delete: (id: string) => {
 			update((object) => {
-				delete object[id];
-				store.set(chatListStoreId, object);
+				const list = object.filter((item) => item.id !== id);
+				store.set(chatListStoreId, list);
+				return list;
+			});
+		},
+		remember: (object: ChatListType) => {
+			update(() => object);
+		},
+		add: (value: ChatType) => {
+			update((object) => {
+				if (object) {
+					const list = [...object, value];
+					store.set(chatListStoreId, list);
+					return list;
+				} else if (value) {
+					store.set(chatListStoreId, [value]);
+					return [value];
+				}
 				return object;
 			});
 		},
-		remember: (object: ChatListType | undefined = {}) => {
-			update(() => object);
-		},
 		update: (id: string, value: ContentType) => {
 			update((object) => {
-				object[id] = value;
+				const prevValue = object.find((item) => item.id === id);
+				if (!prevValue) return object;
+
+				prevValue.content = value;
 				store.set(chatListStoreId, object);
 				return object;
 			});
