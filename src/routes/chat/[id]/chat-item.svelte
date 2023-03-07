@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from '~/components/icon.svelte';
 	import type { ChatCompletionRequestMessage, CreateCompletionResponseUsage } from 'openai';
+	import { markdown } from '~/lib/markdown';
 
 	export let message: ChatCompletionRequestMessage;
 
@@ -11,5 +12,5 @@
 
 <ion-item color={itemColor} lines="none">
 	<Icon name={icon} fill color={iconColor} start />
-	<ion-label class="ion-text-wrap">{message.content}</ion-label>
+	<ion-label class="ion-text-wrap">{@html markdown(message.content)}</ion-label>
 </ion-item>
