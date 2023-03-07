@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { v4 as uuid } from 'uuid';
 	import Icon from '~/components/icon.svelte';
+	import { chatService } from '~/machines/chat-machine';
 	import { chatList } from '~/store/chatList';
 </script>
 
@@ -27,9 +28,24 @@
 		<ion-menu-toggle auto-hide={false}>
 			{#each [...($chatList ?? [])].reverse() as chat}
 				{@const title = chat.content.messages[0]?.content ?? 'New Chat'}
-				<ion-item button on:click={() => goto(`/chat/${chat.id}`)}>
-					<Icon name="chat" fill size="s" />
+				<ion-item
+					lines="none"
+					color={$chatService?.context.id === chat.id ? 'dark-gray' : 'black'}
+					button
+					on:click={() => goto(`/chat/${chat.id}`)}
+					detail={false}
+				>
 					<ion-label> {title} </ion-label>
+					<ion-buttons>
+						<ion-button
+							color="danger"
+							on:click={() => {
+								chatList.delete(chat.id);
+							}}
+						>
+							<Icon name="delete" size="s" fill />
+						</ion-button>
+					</ion-buttons>
 				</ion-item>
 			{/each}
 		</ion-menu-toggle>
