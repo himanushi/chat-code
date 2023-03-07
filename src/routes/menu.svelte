@@ -26,9 +26,10 @@
 	<ion-content>
 		<ion-menu-toggle auto-hide={false}>
 			{#each $chatList ?? [] as chat}
+				{@const title = chat.content.messages[0]?.content ?? 'New Chat'}
 				<ion-item button on:click={() => goto(`/chat/${chat.id}`)}>
 					<Icon name="chat" fill size="s" />
-					<ion-label> {chat.id} </ion-label>
+					<ion-label> {title} </ion-label>
 				</ion-item>
 			{/each}
 		</ion-menu-toggle>
