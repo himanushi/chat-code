@@ -16,6 +16,11 @@ export type ChatListType = ChatType[];
 
 export const chatListStoreId = 'chatList';
 
+const filter = (data: ChatListType) =>
+	data.filter((obj, index) => {
+		return index === data.findIndex((t) => t.id === obj.id);
+	});
+
 const createChatList = () => {
 	const { subscribe, update } = writable<ChatListType>([]);
 
@@ -27,13 +32,13 @@ const createChatList = () => {
 				return list;
 			});
 		},
-		remember: (object: ChatListType) => {
+		remember: (object: ChatListType | undefined = []) => {
 			update(() => object);
 		},
 		add: (value: ChatType) => {
 			update((object) => {
 				if (object) {
-					const list = [...object, value];
+					const list = filter([...object, value]);
 					store.set(chatListStoreId, list);
 					return list;
 				} else if (value) {

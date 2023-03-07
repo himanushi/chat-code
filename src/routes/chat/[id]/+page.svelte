@@ -1,11 +1,9 @@
 <script lang="ts">
 	import type { Components } from '@ionic/core';
-	import { onDestroy, onMount } from 'svelte';
 	import Icon from '~/components/icon.svelte';
-	import { chatMachine } from '~/machines/chat-machine';
+	import { chatService } from '~/machines/chat-machine';
 	import ChatItem from './chat-item.svelte';
 	import type { PageData } from './$types';
-	import { interpret } from 'xstate';
 	import { apiKey } from '~/store/apiKey';
 	import { goto } from '$app/navigation';
 	import { matches } from '~/lib/matches';
@@ -13,7 +11,6 @@
 	export let data: PageData;
 
 	let message = '';
-	const chatService = interpret(chatMachine);
 	const send = () => {
 		chatService.send({ type: 'ADD_MESSAGES', messages: [{ content: message, role: 'user' }] });
 		message = '';
@@ -24,9 +21,7 @@
 		: 0;
 	$: id = data.id;
 	$: if (id && $apiKey && $chatService && matches($chatService, ['idle'])) {
-		chatService.send({ type: 'SET_API_TOKEN', apiKey: $apiKey });
-		chatService.send({ type: 'SET_ID', id });
-		chatService.send('INIT');
+		chatService.send([{ type: 'SET_API_TOKEN', apiKey: $apiKey }, { type: 'SET_ID', id }, 'INIT']);
 	}
 	$: if (id) {
 		chatService.send({ type: 'SET_ID', id });
@@ -39,13 +34,6 @@
 	}
 
 	let contentEle: Components.IonContent | null = null;
-	onMount(() => {
-		chatService.start();
-	});
-
-	onDestroy(() => {
-		chatService.stop();
-	});
 </script>
 
 {#if $apiKey && $chatService}

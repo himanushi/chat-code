@@ -6,7 +6,7 @@
 	import Menu from './menu.svelte';
 	import Icon from '~/components/icon.svelte';
 	import { store } from '~/store/store';
-	import { chatList, chatListStoreId, type ChatListType } from '~/store/chatList';
+	import { chatList, chatListStoreId } from '~/store/chatList';
 	import { apiKey, apiKeyStoreId } from '~/store/apiKey';
 
 	onMount(async () => {

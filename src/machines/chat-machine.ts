@@ -4,7 +4,7 @@ import {
 	type ChatCompletionRequestMessage,
 	type CreateCompletionResponseUsage
 } from 'openai';
-import { assign, createMachine } from 'xstate';
+import { assign, createMachine, interpret } from 'xstate';
 import { chatList, chatListStoreId, type ChatListType } from '~/store/chatList';
 import { store } from '~/store/store';
 
@@ -162,3 +162,5 @@ export const chatMachine = createMachine(
 		}
 	}
 );
+
+export const chatService = interpret(chatMachine).start();
