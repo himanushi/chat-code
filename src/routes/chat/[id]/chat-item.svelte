@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Icon from '~/components/icon.svelte';
-	import type { ChatCompletionRequestMessage, CreateCompletionResponseUsage } from 'openai';
+	import type { ChatCompletionRequestMessage } from 'openai';
 	import { markdown } from '~/lib/markdown';
 
 	export let message: ChatCompletionRequestMessage;
