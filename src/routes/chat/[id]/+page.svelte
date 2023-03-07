@@ -19,6 +19,9 @@
 		message = '';
 	};
 
+	$: tokens = $chatService
+		? $chatService.context.usages.map((u) => u.total_tokens).reduce((a, b) => a + b, 0)
+		: 0;
 	$: id = data.id;
 	$: if (id && $apiKey && $chatService && matches($chatService, ['idle'])) {
 		chatService.send('INIT', { id, apiKey: $apiKey });
@@ -47,7 +50,7 @@
 			{/each}
 			<ion-item>
 				<ion-note>
-					{$chatService.context.usage.total_tokens} Tokens used
+					{tokens} Tokens used, {tokens * 0.000002} $
 				</ion-note>
 			</ion-item>
 		</ion-list>
