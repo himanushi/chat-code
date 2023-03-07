@@ -25,7 +25,7 @@
 	</ion-header>
 	<ion-content>
 		<ion-menu-toggle auto-hide={false}>
-			{#each $chatList ?? [] as chat}
+			{#each [...($chatList ?? [])].reverse() as chat}
 				{@const title = chat.content.messages[0]?.content ?? 'New Chat'}
 				<ion-item button on:click={() => goto(`/chat/${chat.id}`)}>
 					<Icon name="chat" fill size="s" />
