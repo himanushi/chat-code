@@ -2,6 +2,7 @@
 	import Icon from '~/components/icon.svelte';
 	import type { ChatCompletionRequestMessage } from 'openai';
 	import { markdown } from '~/lib/markdown';
+	import { isMarkdown } from '~/store/isMarkdown';
 
 	export let message: ChatCompletionRequestMessage;
 
@@ -15,5 +16,11 @@
 	<Icon name={icon} {fill} color={iconColor} start />
 </ion-item>
 <ion-item color={itemColor} lines="none">
-	<ion-label class="ion-text-wrap text-select">{@html markdown(message.content)}</ion-label>
+	{#if $isMarkdown}
+		<ion-label class="ion-text-wrap text-select">{@html markdown(message.content)}</ion-label>
+	{:else}
+		<ion-label class="ion-text-wrap text-select">
+			{@html message.content.replaceAll('\n', '<br>')}
+		</ion-label>
+	{/if}
 </ion-item>

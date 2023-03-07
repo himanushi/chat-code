@@ -7,6 +7,7 @@
 	import { apiKey } from '~/store/apiKey';
 	import { goto } from '$app/navigation';
 	import { matches } from '~/lib/matches';
+	import { isMarkdown } from '~/store/isMarkdown';
 
 	export let data: PageData;
 
@@ -56,6 +57,16 @@
 		</ion-list>
 	</ion-content>
 	<ion-footer>
+		<ion-toolbar>
+			<ion-buttons slot="start">
+				<ion-button
+					color={$isMarkdown ? 'black' : 'gray'}
+					on:click={() => isMarkdown.set(!$isMarkdown)}
+				>
+					<ion-icon name="logo-markdown" />
+				</ion-button>
+			</ion-buttons>
+		</ion-toolbar>
 		<ion-toolbar>
 			<ion-buttons slot="start">
 				<ion-button>
