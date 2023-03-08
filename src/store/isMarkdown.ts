@@ -1,3 +1,3 @@
-import { writable } from 'svelte/store';
+import { booleanStore } from './booleanStore';
 
-export const isMarkdown = writable<boolean>(true);
+export const isMarkdown = booleanStore({ key: 'isMarkdown', initialValue: true });
