@@ -19,7 +19,7 @@
 			<ion-title>Menu</ion-title>
 		</ion-toolbar>
 		<ion-menu-toggle auto-hide={false}>
-			<ion-card color="gray" button on:click={() => goto(`/chat/${uuid()}`)}>
+			<ion-card color="dark-gray" button on:click={() => goto(`/chat/${uuid()}`)}>
 				<ion-card-content> + New Chat </ion-card-content>
 			</ion-card>
 		</ion-menu-toggle>
