@@ -10,19 +10,32 @@
 	const icon = message.role === 'user' ? 'person' : 'smart_toy';
 	const iconColor = message.role === 'user' ? 'blue' : 'green';
 	const fill = message.role === 'user';
+
+	$: markedContent = '';
+	$: markdown(message.content, (err, result) => {
+		markedContent = '';
+		if (err) {
+			console.error(err);
+			markedContent = message.content;
+			return;
+		}
+		markedContent = String(result);
+	});
 </script>
 
 <ion-item color={itemColor} lines="none">
 	<Icon name={icon} {fill} color={iconColor} start />
 </ion-item>
 <ion-item color={itemColor} lines="none">
-	{#if $isMarkdown}
-		<ion-label class="ion-text-wrap text-select">{@html markdown(message.content)}</ion-label>
-	{:else}
-		<ion-label class="ion-text-wrap text-select">
-			{#each message.content.split('\n') as content}
-				{content}<br />
-			{/each}
-		</ion-label>
-	{/if}
+	<ion-text>
+		{#if $isMarkdown}
+			<ion-label class="ion-text-wrap text-select">{@html markedContent}</ion-label>
+		{:else}
+			<ion-label class="ion-text-wrap text-select">
+				{#each message.content.split('\n') as content}
+					{content.replaceAll(' ', '\u00a0')}<br />
+				{/each}
+			</ion-label>
+		{/if}
+	</ion-text>
 </ion-item>
