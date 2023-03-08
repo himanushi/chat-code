@@ -8,6 +8,8 @@
 	import { goto } from '$app/navigation';
 	import { matches } from '~/lib/matches';
 	import { isMarkdown } from '~/store/isMarkdown';
+	import { currencyUnit } from '~/store/currencyUnit';
+	import { currencyExchangeRate } from '~/store/currencyExchangeRate';
 
 	export let data: PageData;
 
@@ -51,7 +53,7 @@
 			{/if}
 			<ion-item lines="none">
 				<ion-note>
-					{tokens} Tokens used, {tokens * 0.000002 * 135} 円
+					{tokens} Tokens, {(tokens * 0.000002 * $currencyExchangeRate).toFixed(2)}{$currencyUnit}
 				</ion-note>
 			</ion-item>
 		</ion-list>
