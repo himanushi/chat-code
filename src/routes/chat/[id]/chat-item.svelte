@@ -20,7 +20,9 @@
 		<ion-label class="ion-text-wrap text-select">{@html markdown(message.content)}</ion-label>
 	{:else}
 		<ion-label class="ion-text-wrap text-select">
-			{@html message.content.replaceAll('\n', '<br>')}
+			{#each message.content.split('\n') as content}
+				{content}<br />
+			{/each}
 		</ion-label>
 	{/if}
 </ion-item>
