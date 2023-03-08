@@ -6,7 +6,10 @@ module.exports = {
 	ignorePatterns: ['*.cjs'],
 	overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
 	settings: {
-		'svelte3/typescript': () => require('typescript')
+		'svelte3/typescript': () => require('typescript'),
+		'svelte3/ignore-warnings': (warning) => {
+			return warning.code === 'a11y-click-events-have-key-events';
+		}
 	},
 	parserOptions: {
 		sourceType: 'module',
@@ -16,5 +19,9 @@ module.exports = {
 		browser: true,
 		es2017: true,
 		node: true
+	},
+	rules: {
+		'a11y-click-events-have-key-events': 'off',
+		'@typescript-eslint/no-explicit-any': 'off'
 	}
 };
