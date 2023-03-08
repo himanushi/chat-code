@@ -5,27 +5,22 @@
 	import '~/theme/variables.css';
 	import Menu from './menu.svelte';
 	import Icon from '~/components/icon.svelte';
-	import { store } from '~/store/store';
-	import { chatList, chatListStoreId } from '~/store/chatList';
-	import { apiKey, apiKeyStoreId } from '~/store/apiKey';
+	import { highlightCode } from '~/store/highlightCode';
 
 	onMount(async () => {
-		// initialize Ionic
 		initialize({
 			animated: true,
 			mode: 'ios'
 		});
-
-		// get API key from storage
-		const key = await store.get<string>(apiKeyStoreId);
-		if (typeof key === 'string') {
-			apiKey.update(key);
-		}
-
-		// set chat list from storage
-		chatList.remember(await store.get(chatListStoreId));
 	});
 </script>
+
+<svelte:head>
+	<link
+		rel="stylesheet"
+		href={`https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/styles/${$highlightCode}.min.css`}
+	/>
+</svelte:head>
 
 <ion-app>
 	<ion-split-pane when="sm" content-id="main">
