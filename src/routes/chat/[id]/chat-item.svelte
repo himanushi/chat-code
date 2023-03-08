@@ -27,15 +27,17 @@
 	<Icon name={icon} {fill} color={iconColor} start />
 </ion-item>
 <ion-item color={itemColor} lines="none">
-	<ion-text>
-		{#if $isMarkdown}
-			<ion-label class="ion-text-wrap text-select">{@html markedContent}</ion-label>
-		{:else}
-			<ion-label class="ion-text-wrap text-select">
+	{#if $isMarkdown}
+		<ion-label class="ion-text-wrap text-select"
+			><ion-text>{@html markedContent}</ion-text></ion-label
+		>
+	{:else}
+		<ion-label class="ion-text-wrap text-select">
+			<ion-text>
 				{#each message.content.split('\n') as content}
 					{content.replaceAll(' ', '\u00a0')}<br />
 				{/each}
-			</ion-label>
-		{/if}
-	</ion-text>
+			</ion-text>
+		</ion-label>
+	{/if}
 </ion-item>
