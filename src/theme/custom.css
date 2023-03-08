@@ -9,6 +9,10 @@
 	user-select: text;
 }
 
+code.hljs {
+	border-radius: 6px;
+}
+
 @font-face {
 	font-family: 'Material Symbols Rounded';
 	font-style: normal;
