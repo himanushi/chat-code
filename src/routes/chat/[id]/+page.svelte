@@ -45,7 +45,7 @@
 			{/each}
 			{#if matches($chatService, ['chatting'])}
 				<ion-item color="dark-gray" lines="none">
-					<Icon name="smart_toy" color="green" fill start />
+					<Icon name="smart_toy" color="green" start />
 					<ion-spinner name="bubbles" />
 				</ion-item>
 			{/if}
@@ -68,12 +68,8 @@
 			</ion-buttons>
 		</ion-toolbar>
 		<ion-toolbar>
-			<ion-buttons slot="start">
-				<ion-button>
-					<Icon name="person" fill color="blue" />
-				</ion-button>
-			</ion-buttons>
 			<ion-textarea
+				class="text-input"
 				rows={1}
 				auto-grow={true}
 				placeholder="Type a message"
@@ -103,3 +99,11 @@
 		</ion-item>
 	</ion-content>
 {/if}
+
+<style>
+	.text-input {
+		border: 1px solid #666;
+		border-radius: 6px;
+		padding: 0 6px;
+	}
+</style>
