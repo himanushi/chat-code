@@ -40,7 +40,7 @@
 		{#if usage}
 			<ion-item lines="none"> 今月の使用量 </ion-item>
 			<ion-item lines="none">
-				{usage.total_usage / 100} $
+				$ {usage.total_usage / 100}
 			</ion-item>
 			<ion-item lines="none">
 				{Math.floor((usage.total_usage / 100) * 134)} 円
