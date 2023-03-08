@@ -1,21 +1,3 @@
-import { writable } from 'svelte/store';
-import { store } from './store';
+import { baseStore } from './baseStore';
 
-export type ApiKeyType = string | undefined;
-export const apiKeyStoreId = 'apiKey';
-
-const createApiKey = () => {
-	const { subscribe, update } = writable<ApiKeyType>(undefined);
-
-	return {
-		subscribe,
-		update: (key: ApiKeyType | undefined) => {
-			update(() => {
-				store.set(apiKeyStoreId, key);
-				return key;
-			});
-		}
-	};
-};
-
-export const apiKey = createApiKey();
+export const apiKey = baseStore<string>({ key: 'apiKey', initialValue: '' });
