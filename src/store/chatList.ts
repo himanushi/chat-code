@@ -24,6 +24,12 @@ const filter = (data: ChatListType) =>
 const createChatList = () => {
 	const { subscribe, update } = writable<ChatListType>([]);
 
+	store.get<ChatListType>(chatListStoreId).then((value) => {
+		if (value) {
+			update(() => value);
+		}
+	});
+
 	return {
 		delete: (id: string) => {
 			update((object) => {
@@ -31,9 +37,6 @@ const createChatList = () => {
 				store.set(chatListStoreId, list);
 				return list;
 			});
-		},
-		remember: (object: ChatListType | undefined = []) => {
-			update(() => object);
 		},
 		add: (value: ChatType) => {
 			update((object) => {
