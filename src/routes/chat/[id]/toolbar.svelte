@@ -8,7 +8,7 @@
 <ion-toolbar>
 	<ion-buttons slot="start">
 		<ion-button on:click={() => goto(`/chat/${uuid()}`)}>
-			<Icon name="note_add" />
+			<Icon name="add_comment" />
 		</ion-button>
 		<ion-button
 			color={$isMarkdown ? 'black' : 'gray'}
