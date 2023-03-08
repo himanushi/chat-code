@@ -12,7 +12,7 @@
 			<ion-buttons slot="start">
 				<ion-button>
 					<ion-menu-toggle>
-						<Icon name="close" size="s" />
+						<Icon name="close" />
 					</ion-menu-toggle>
 				</ion-button>
 			</ion-buttons>
@@ -56,7 +56,7 @@
 				<ion-label>Settings</ion-label>
 			</ion-list-header>
 			<ion-menu-toggle auto-hide={false}>
-				<ion-item button on:click={() => goto('/me')}>
+				<ion-item button on:click={() => goto('/me')} lines="none">
 					<Icon name="person" size="s" fill />
 					<ion-label>My Account</ion-label>
 				</ion-item>
