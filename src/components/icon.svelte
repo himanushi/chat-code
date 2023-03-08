@@ -33,5 +33,9 @@
 		flex: none;
 		width: 1em;
 		height: 1em;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
 	}
 </style>
