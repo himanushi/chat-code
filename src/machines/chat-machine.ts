@@ -1,3 +1,4 @@
+import { toastController } from '@ionic/core';
 import {
 	Configuration,
 	OpenAIApi,
@@ -24,6 +25,7 @@ type Context = {
 
 type Events =
 	| { type: 'INIT' }
+	| { type: 'READY' }
 	| { type: 'SET_API_TOKEN'; apiKey: string }
 	| { type: 'SET_ID'; id: string }
 	| { type: 'RESET' }
@@ -98,6 +100,7 @@ export const chatMachine = createMachine(
 							if (!openai) {
 								throw new Error('OpenAI not initialized');
 							}
+
 							openai
 								.createChatCompletion({
 									model: model,
@@ -118,10 +121,21 @@ export const chatMachine = createMachine(
 											messages: [message]
 										});
 									}
+								})
+								.catch((error) => {
+									toastController
+										.create({
+											message: error.message,
+											duration: 10000,
+											color: 'danger'
+										})
+										.then((toast) => toast.present());
+									callback('READY');
 								});
 						}
 				},
 				on: {
+					READY: 'ready',
 					ADD_MESSAGES: {
 						actions: 'addMessages',
 						target: 'ready'
