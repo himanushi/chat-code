@@ -2,8 +2,12 @@ import { writable } from 'svelte/store';
 import { store } from './store';
 import type { ChatCompletionRequestMessage, CreateCompletionResponseUsage } from 'openai';
 
+export type ChatCompletionRequestMessageWithTimeStamp = ChatCompletionRequestMessage & {
+	timestamp?: number;
+};
+
 export type ContentType = {
-	messages: ChatCompletionRequestMessage[];
+	messages: ChatCompletionRequestMessageWithTimeStamp[];
 	usages: CreateCompletionResponseUsage[];
 };
 
@@ -51,12 +55,22 @@ const createChatList = () => {
 				return object;
 			});
 		},
-		update: (id: string, value: ContentType) => {
+		updateMessages: (id: string, messages: ChatCompletionRequestMessageWithTimeStamp[]) => {
 			update((object) => {
 				const prevValue = object.find((item) => item.id === id);
 				if (!prevValue) return object;
 
-				prevValue.content = value;
+				prevValue.content.messages = messages;
+				store.set(chatListStoreId, object);
+				return object;
+			});
+		},
+		updateUsages: (id: string, usages: CreateCompletionResponseUsage[]) => {
+			update((object) => {
+				const prevValue = object.find((item) => item.id === id);
+				if (!prevValue) return object;
+
+				prevValue.content.usages = usages;
 				store.set(chatListStoreId, object);
 				return object;
 			});

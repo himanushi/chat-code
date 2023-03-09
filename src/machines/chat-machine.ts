@@ -5,7 +5,12 @@ import {
 	type CreateCompletionResponseUsage
 } from 'openai';
 import { assign, createMachine, interpret } from 'xstate';
-import { chatList, chatListStoreId, type ChatListType } from '~/store/chatList';
+import {
+	chatList,
+	chatListStoreId,
+	type ChatCompletionRequestMessageWithTimeStamp,
+	type ChatListType
+} from '~/store/chatList';
 import { store } from '~/store/store';
 
 type Context = {
@@ -13,7 +18,7 @@ type Context = {
 	openai?: OpenAIApi;
 	model: string;
 	apiKey?: string;
-	messages: ChatCompletionRequestMessage[];
+	messages: ChatCompletionRequestMessageWithTimeStamp[];
 	usages: CreateCompletionResponseUsage[];
 };
 
@@ -88,7 +93,7 @@ export const chatMachine = createMachine(
 			chatting: {
 				invoke: {
 					src:
-						({ id, openai, model, messages, usages }) =>
+						({ id, openai, model, messages }) =>
 						(callback) => {
 							if (!openai) {
 								throw new Error('OpenAI not initialized');
@@ -96,7 +101,8 @@ export const chatMachine = createMachine(
 							openai
 								.createChatCompletion({
 									model: model,
-									messages
+									// eslint-disable-next-line @typescript-eslint/no-unused-vars
+									messages: messages.map(({ timestamp, ...message }) => message)
 								})
 								.then((response) => {
 									const content = response.data.choices[0].message?.content;
@@ -110,10 +116,6 @@ export const chatMachine = createMachine(
 										callback({
 											type: 'ADD_MESSAGES',
 											messages: [message]
-										});
-										chatList.update(id, {
-											messages: [...messages, message],
-											usages: [...usages, usage]
 										});
 									}
 								});
@@ -144,15 +146,22 @@ export const chatMachine = createMachine(
 				}
 			}),
 			addMessages: assign({
-				messages: ({ messages }, event) => {
-					if (!('messages' in event)) return messages;
-					return [...messages, ...event.messages];
+				messages: ({ id, messages }, event) => {
+					if (!('messages' in event) || !id) return messages;
+					const results = [
+						...messages,
+						...event.messages.map((message) => ({ timestamp: Date.now(), ...message }))
+					];
+					chatList.updateMessages(id, results);
+					return results;
 				}
 			}),
 			addUsages: assign({
-				usages: ({ usages }, event) => {
-					if (!('usages' in event)) return usages;
-					return [...usages, ...event.usages];
+				usages: ({ id, usages }, event) => {
+					if (!('usages' in event) || !id) return usages;
+					const results = [...usages, ...event.usages];
+					chatList.updateUsages(id, results);
+					return results;
 				}
 			}),
 			reset: assign({
