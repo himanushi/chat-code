@@ -126,10 +126,13 @@ export const chatMachine = createMachine(
 									toastController
 										.create({
 											message: error.message,
-											duration: 10000,
+											duration: 20000,
 											color: 'danger'
 										})
-										.then((toast) => toast.present());
+										.then((toast) => {
+											toast.present();
+											toast.onclick = () => toast.dismiss();
+										});
 									callback('READY');
 								});
 						}
