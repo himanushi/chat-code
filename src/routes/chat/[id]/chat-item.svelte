@@ -27,7 +27,7 @@
 <ion-item color={itemColor} lines="none">
 	<Icon name={icon} {fill} color={iconColor} start />
 	{#if message.timestamp}
-		<ion-note class="timestamp">
+		<ion-note class="timestamp" slot="end">
 			{$date(new Date(message.timestamp), { format: 'medium' })}
 			{$time(new Date(message.timestamp), { format: 'medium' })}
 		</ion-note>
