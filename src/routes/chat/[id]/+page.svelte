@@ -32,7 +32,7 @@
 	}
 
 	$: if ($chatService && $chatService.context.messages.length) {
-		if (contentEle)
+		if (contentEle && contentEle.getScrollElement)
 			contentEle.getScrollElement().then((ele) => {
 				ele.scrollTo({ top: ele.scrollHeight });
 			});
