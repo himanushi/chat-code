@@ -32,9 +32,10 @@
 	}
 
 	$: if ($chatService && $chatService.context.messages.length) {
-		contentEle?.getScrollElement().then((ele) => {
-			ele.scrollTo({ top: ele.scrollHeight });
-		});
+		if (contentEle)
+			contentEle.getScrollElement().then((ele) => {
+				ele.scrollTo({ top: ele.scrollHeight });
+			});
 	}
 
 	let contentEle: Components.IonContent | null = null;
