@@ -11,6 +11,13 @@
 	import ja from '~/i18n/ja.json';
 	import { locale } from '~/store/locale';
 
+	$: if ($locale) {
+		init({
+			fallbackLocale: 'en',
+			initialLocale: $locale ?? getLocaleFromNavigator()
+		});
+	}
+
 	let ready = false;
 	onMount(async () => {
 		// initialize ionic
@@ -53,7 +60,18 @@
 								</ion-menu-toggle>
 							</ion-button>
 						</ion-buttons>
-						<!-- <ion-title> {$_('welcome')} </ion-title> -->
+						<ion-title> {$_('welcome')} Chat Code </ion-title>
+						<ion-buttons slot="end">
+							<ion-button id="header-translate-button">
+								<Icon name="translate" size="s" />
+							</ion-button>
+							<ion-popover trigger="header-translate-button" trigger-action="click">
+								<ion-content>
+									<ion-item on:click={() => locale.set('en')}> English </ion-item>
+									<ion-item on:click={() => locale.set('ja')}> 日本語 </ion-item>
+								</ion-content>
+							</ion-popover>
+						</ion-buttons>
 					</ion-toolbar>
 				</ion-header>
 				<slot />
