@@ -1,10 +1,11 @@
 <script lang="ts">
 	import Icon from '~/components/icon.svelte';
-	import type { ChatCompletionRequestMessage } from 'openai';
 	import { markdown } from '~/lib/markdown';
 	import { isMarkdown } from '~/store/isMarkdown';
+	import { date, time } from 'svelte-i18n';
+	import type { ChatCompletionRequestMessageWithTimeStamp } from '~/store/chatList';
 
-	export let message: ChatCompletionRequestMessage;
+	export let message: ChatCompletionRequestMessageWithTimeStamp;
 
 	const itemColor = message.role === 'user' ? 'black' : 'dark-gray';
 	const icon = message.role === 'user' ? 'person' : 'smart_toy';
@@ -25,6 +26,12 @@
 
 <ion-item color={itemColor} lines="none">
 	<Icon name={icon} {fill} color={iconColor} start />
+	{#if message.timestamp}
+		<ion-note class="timestamp">
+			{$date(new Date(message.timestamp), { format: 'medium' })}
+			{$time(new Date(message.timestamp), { format: 'medium' })}
+		</ion-note>
+	{/if}
 </ion-item>
 <ion-item color={itemColor} lines="none">
 	{#if $isMarkdown}
@@ -41,3 +48,9 @@
 		</ion-label>
 	{/if}
 </ion-item>
+
+<style>
+	.timestamp {
+		font-size: 0.8em;
+	}
+</style>
