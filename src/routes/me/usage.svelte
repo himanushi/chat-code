@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { _ } from 'svelte-i18n';
+	import Icon from '~/components/icon.svelte';
 	import { getRangeUsage, type RangeUsage } from '~/lib/getRangeUsage';
 	import { apiKey } from '~/store/apiKey';
 	import { currencyExchangeRate } from '~/store/currencyExchangeRate';
@@ -7,14 +8,22 @@
 
 	let usage: RangeUsage | undefined = undefined;
 	let loading = false;
-
+	let error: Error | undefined = undefined;
 	const now = new Date();
 	$: if ($apiKey) {
+		usage = undefined;
 		loading = true;
-		getRangeUsage($apiKey, now).then((u) => {
-			usage = u;
-			loading = false;
-		});
+		error = undefined;
+		getRangeUsage($apiKey, now)
+			.then((u) => {
+				usage = u;
+			})
+			.catch((err) => {
+				error = err;
+			})
+			.finally(() => {
+				loading = false;
+			});
 	}
 </script>
 
@@ -27,6 +36,10 @@
 <ion-item lines="none">
 	{#if loading}
 		<ion-spinner name="dots" />
+	{/if}
+	{#if error}
+		<Icon name="error" fill color="red" />
+		<ion-text color="red">{error}</ion-text>
 	{/if}
 	{#if usage}
 		{((usage.total_usage / 100) * $currencyExchangeRate).toFixed(2)}{$currencyUnit}
