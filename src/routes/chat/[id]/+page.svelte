@@ -10,6 +10,7 @@
 	import { currencyUnit } from '~/store/currencyUnit';
 	import { currencyExchangeRate } from '~/store/currencyExchangeRate';
 	import Toolbar from './toolbar.svelte';
+	import { _ } from 'svelte-i18n';
 
 	export let data: PageData;
 
@@ -37,6 +38,7 @@
 	}
 
 	let contentEle: Components.IonContent | null = null;
+	$: currency = (tokens * 0.000002 * $currencyExchangeRate).toFixed(2) + $currencyUnit;
 </script>
 
 {#if $apiKey && $chatService}
@@ -53,7 +55,7 @@
 			{/if}
 			<ion-item lines="none">
 				<ion-note>
-					{tokens} Tokens, {(tokens * 0.000002 * $currencyExchangeRate).toFixed(2)}{$currencyUnit}
+					{$_('chat.usage_tokens', { values: { tokens, currency } })}
 				</ion-note>
 			</ion-item>
 		</ion-list>
@@ -65,7 +67,7 @@
 				class="text-input"
 				rows={1}
 				auto-grow={true}
-				placeholder="Type a message"
+				placeholder={$_('chat.input_placeholder')}
 				value={message}
 				on:ionChange={(e) => {
 					if (e.detail.value || e.detail.value === '') message = e.detail.value;
@@ -88,7 +90,7 @@
 	<ion-content>
 		<ion-item button on:click={() => goto('/me')}>
 			<Icon fill name="warning" color="yellow" start />
-			<ion-label> API Key を設定してください</ion-label>
+			<ion-label> {$_('chat.please_set_api_key')} </ion-label>
 		</ion-item>
 	</ion-content>
 {/if}

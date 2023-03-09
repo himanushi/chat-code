@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { _ } from 'svelte-i18n';
 	import { v4 as uuid } from 'uuid';
 	import Icon from '~/components/icon.svelte';
 	import { chatService } from '~/machines/chat-machine';
@@ -16,18 +17,18 @@
 					</ion-menu-toggle>
 				</ion-button>
 			</ion-buttons>
-			<ion-title>Menu</ion-title>
+			<ion-title>{$_('menu.title')}</ion-title>
 		</ion-toolbar>
 		<ion-menu-toggle auto-hide={false}>
 			<ion-card color="dark-gray" button on:click={() => goto(`/chat/${uuid()}`)}>
-				<ion-card-content> + New Chat </ion-card-content>
+				<ion-card-content> + {$_('menu.new_chat')} </ion-card-content>
 			</ion-card>
 		</ion-menu-toggle>
 	</ion-header>
 	<ion-content>
 		<ion-menu-toggle auto-hide={false}>
 			{#each [...($chatList ?? [])].reverse() as chat}
-				{@const title = chat.content.messages[0]?.content ?? 'New Chat'}
+				{@const title = chat.content.messages[0]?.content ?? $_('menu.new_chat')}
 				<ion-item
 					lines="none"
 					color={$chatService?.context.id === chat.id ? 'dark-gray' : 'black'}
@@ -53,12 +54,12 @@
 	<ion-footer>
 		<ion-list>
 			<ion-list-header>
-				<ion-label>Settings</ion-label>
+				<ion-label>{$_('menu.settings')}</ion-label>
 			</ion-list-header>
 			<ion-menu-toggle auto-hide={false}>
 				<ion-item button on:click={() => goto('/me')} lines="none">
 					<Icon name="person" size="s" fill />
-					<ion-label>My Account</ion-label>
+					<ion-label>{$_('menu.my_account')}</ion-label>
 				</ion-item>
 			</ion-menu-toggle>
 		</ion-list>
