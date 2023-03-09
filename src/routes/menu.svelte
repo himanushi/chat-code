@@ -5,6 +5,7 @@
 	import Icon from '~/components/icon.svelte';
 	import { chatService } from '~/machines/chat-machine';
 	import { chatList } from '~/store/chatList';
+	import { searchText } from '~/store/searchText';
 </script>
 
 <ion-menu content-id="menu" max-edge-start={0}>
@@ -24,30 +25,42 @@
 				<ion-card-content> + {$_('menu.new_chat')} </ion-card-content>
 			</ion-card>
 		</ion-menu-toggle>
+		<ion-searchbar
+			show-clear-button="always"
+			placeholder={$_('menu.searchbar')}
+			value={$searchText}
+			on:ionChange={(e) => searchText.set(e.detail.value)}
+			on:ionClear={() => searchText.set(undefined)}
+		/>
 	</ion-header>
 	<ion-content>
 		<ion-menu-toggle auto-hide={false}>
 			{#each [...($chatList ?? [])].reverse() as chat}
 				{@const title = chat.content.messages[0]?.content ?? $_('menu.new_chat')}
-				<ion-item
-					lines="none"
-					color={$chatService?.context.id === chat.id ? 'dark-gray' : 'black'}
-					button
-					on:click={() => goto(`/chat/${chat.id}`)}
-					detail={false}
-				>
-					<ion-label> {title} </ion-label>
-					<ion-buttons>
-						<ion-button
-							color="danger"
-							on:click={() => {
-								chatList.delete(chat.id);
-							}}
-						>
-							<Icon name="delete" size="s" fill />
-						</ion-button>
-					</ion-buttons>
-				</ion-item>
+				{@const matchMessage = chat.content.messages.find((message) => {
+					return message.content.toLowerCase().includes($searchText?.toLowerCase() ?? '');
+				})}
+				{#if matchMessage || $searchText === undefined || $searchText === ''}
+					<ion-item
+						lines="none"
+						color={$chatService?.context.id === chat.id ? 'dark-gray' : 'black'}
+						button
+						on:click={() => goto(`/chat/${chat.id}`)}
+						detail={false}
+					>
+						<ion-label> {title} </ion-label>
+						<ion-buttons>
+							<ion-button
+								color="danger"
+								on:click={() => {
+									chatList.delete(chat.id);
+								}}
+							>
+								<Icon name="delete" size="s" fill />
+							</ion-button>
+						</ion-buttons>
+					</ion-item>
+				{/if}
 			{/each}
 		</ion-menu-toggle>
 	</ion-content>

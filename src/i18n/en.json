@@ -18,7 +18,8 @@
 		"title": "Menu",
 		"new_chat": "New Chat",
 		"settings": "Settings",
-		"my_account": "My Account"
+		"my_account": "My Account",
+		"searchbar": "Search"
 	},
 	"chat": {
 		"usage_tokens": "{tokens, plural, =0 {No tokens} one {1 token} other {{tokens} tokens}}, {currency}",
