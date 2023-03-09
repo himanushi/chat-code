@@ -17,7 +17,11 @@
 	],
 	"eslint.validate": ["javascript", "typescript", "svelte"],
 	"stylelint.validate": ["css", "postcss", "svelte", "scss"],
-	"cSpell.words": ["OPENAI", "xstate"],
+	"cSpell.words": [
+		"OPENAI",
+		"searchbar",
+		"xstate"
+	],
 
 	// ref: https://github.com/sveltejs/language-tools/issues/650#issuecomment-1181354795
 	"svelte.plugin.svelte.compilerWarnings": {

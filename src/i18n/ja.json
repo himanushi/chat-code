@@ -18,7 +18,8 @@
 		"title": "メニュー",
 		"new_chat": "新しいチャット",
 		"settings": "設定",
-		"my_account": "マイアカウント"
+		"my_account": "マイアカウント",
+		"searchbar": "検索"
 	},
 	"chat": {
 		"usage_tokens": "{tokens}トークン, {currency}",
