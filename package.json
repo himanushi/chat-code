@@ -45,6 +45,7 @@
 		"remark-html": "^15.0.2",
 		"remark-parse": "^10.0.1",
 		"remark-rehype": "^10.1.0",
+		"svelte-i18n": "^3.6.0",
 		"uuid": "^9.0.0",
 		"xstate": "^4.37.0"
 	}

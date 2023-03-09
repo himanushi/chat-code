@@ -1,0 +1,32 @@
+{
+	"open_api_settings": {
+		"title": "OpenAI 設定",
+		"api_key": "API Key",
+		"api_key_link": "API Key の取得はこちらから",
+		"api_key_description": "API Key はローカルに保存されています。これは静的なアプリで、サーバーでは保持していません。ブラウザのローカルストレージに保存されています。予め使用料の上限を設定しておくことを推奨します。"
+	},
+	"usage": {
+		"title": "使用料",
+		"this_month_usage": "{month}の使用料",
+		"currency_exchange_rate": "為替レート",
+		"currency_unit": "通貨単位"
+	},
+	"code_theme": {
+		"title": "コードテーマ"
+	},
+	"menu": {
+		"title": "メニュー",
+		"new_chat": "新しいチャット",
+		"settings": "設定",
+		"my_account": "マイアカウント"
+	},
+	"chat": {
+		"usage_tokens": "{tokens}トークン, {currency}",
+		"input_placeholder": "メッセージを入力してください",
+		"please_set_api_key": "API Key を設定してください"
+	},
+	"months": {
+		"long": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+		"short": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
+	}
+}

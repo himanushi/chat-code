@@ -1,0 +1,45 @@
+{
+	"open_api_settings": {
+		"title": "OpenAI settings",
+		"api_key": "API Key",
+		"api_key_link": "Please click here to obtain your API Key.",
+		"api_key_description": "The API Key is saved locally and not maintained on the server as this is a static application. It is saved in the browser's local storage. It is recommended to set a usage limit beforehand."
+	},
+	"usage": {
+		"title": "Usage",
+		"this_month_usage": "Usage fees for {month}.",
+		"currency_exchange_rate": "Currency exchange rate",
+		"currency_unit": "Currency unit"
+	},
+	"code_theme": {
+		"title": "Code Theme"
+	},
+	"menu": {
+		"title": "Menu",
+		"new_chat": "New Chat",
+		"settings": "Settings",
+		"my_account": "My Account"
+	},
+	"chat": {
+		"usage_tokens": "{tokens, plural, =0 {No tokens} one {1 token} other {{tokens} tokens}}, {currency}",
+		"input_placeholder": "Type your message here...",
+		"please_set_api_key": "Please set a API Key"
+	},
+	"months": {
+		"long": [
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December"
+		],
+		"short": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+	}
+}

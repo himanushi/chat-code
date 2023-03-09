@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { _ } from 'svelte-i18n';
 	import { codeList } from '~/lib/codeList';
 	import { markdown } from '~/lib/markdown';
 	import { highlightCode } from '~/store/highlightCode';
@@ -57,7 +58,7 @@ export  $initHighlight;
 </script>
 
 <ion-item-divider>
-	<ion-label> Code Theme </ion-label>
+	<ion-label> {$_('code_theme.title')} </ion-label>
 </ion-item-divider>
 <ion-item lines="none">
 	<ion-select

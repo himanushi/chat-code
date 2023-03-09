@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from 'svelte-i18n';
 	import { getRangeUsage, type RangeUsage } from '~/lib/getRangeUsage';
 	import { apiKey } from '~/store/apiKey';
 	import { currencyExchangeRate } from '~/store/currencyExchangeRate';
@@ -18,9 +19,11 @@
 </script>
 
 <ion-item-divider>
-	<ion-label> Usage </ion-label>
+	<ion-label> {$_('usage.title')} </ion-label>
 </ion-item-divider>
-<ion-item lines="none"> {now.getMonth() + 1}月の使用料 </ion-item>
+<ion-item lines="none">
+	{$_('usage.this_month_usage', { values: { month: $_(`months.long.${now.getMonth()}`) } })}
+</ion-item>
 <ion-item lines="none">
 	{#if loading}
 		<ion-spinner name="dots" />
@@ -31,7 +34,7 @@
 	{/if}
 </ion-item>
 <ion-item lines="none">
-	<ion-note slot="start">通貨レート</ion-note>
+	<ion-note slot="start">{$_('usage.currency_exchange_rate')}</ion-note>
 	<ion-input
 		type="number"
 		placeholder="100"
@@ -44,7 +47,7 @@
 	/>
 </ion-item>
 <ion-item lines="none">
-	<ion-note slot="start">通貨単位</ion-note>
+	<ion-note slot="start">{$_('usage.currency_unit')}</ion-note>
 	<ion-input
 		label="Stacked label"
 		type="text"
