@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Components } from '@ionic/core';
 	import Icon from '~/components/icon.svelte';
 	import { chatService } from '~/machines/chat-machine';
 	import ChatItem from './chat-item.svelte';
@@ -31,28 +30,17 @@
 		chatService.send({ type: 'SET_ID', id });
 	}
 
-	$: if ($chatService && $chatService.context.messages.length) {
-		if (contentEle && contentEle.getScrollElement)
-			contentEle.getScrollElement().then((ele) => {
-				ele.scrollTo({ top: ele.scrollHeight });
-			});
-	}
-
-	let contentEle: Components.IonContent | null = null;
 	$: currency = (tokens * 0.000002 * $currencyExchangeRate).toFixed(2) + $currencyUnit;
 </script>
 
 {#if $apiKey && $chatService}
-	<ion-content bind:this={contentEle}>
+	<ion-content>
 		<ion-list>
-			{#each $chatService.context.messages as message, index}
+			{#each $chatService.context.messages as message}
 				<ChatItem {message} />
 			{/each}
-			{#if matches($chatService, ['chatting'])}
-				<ion-item color="dark-gray" lines="none">
-					<Icon name="smart_toy" color="green" start />
-					<ion-spinner name="bubbles" />
-				</ion-item>
+			{#if $chatService.context.streamMessage}
+				<ChatItem message={{ content: $chatService.context.streamMessage, role: 'assistant' }} />
 			{/if}
 			<ion-item lines="none">
 				<ion-note>
