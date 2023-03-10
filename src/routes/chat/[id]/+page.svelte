@@ -42,11 +42,11 @@
 			{#if $chatService.context.streamMessage}
 				<ChatItem message={{ content: $chatService.context.streamMessage, role: 'assistant' }} />
 			{/if}
-			<ion-item lines="none">
+			<!-- <ion-item lines="none">
 				<ion-note>
 					{$_('chat.usage_tokens', { values: { tokens, currency } })}
 				</ion-note>
-			</ion-item>
+			</ion-item> -->
 		</ion-list>
 	</ion-content>
 	<ion-footer>
