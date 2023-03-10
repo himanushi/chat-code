@@ -1,10 +1,4 @@
-import { toastController } from '@ionic/core';
-import {
-	Configuration,
-	OpenAIApi,
-	type ChatCompletionRequestMessage,
-	type CreateCompletionResponseUsage
-} from 'openai';
+import type { ChatCompletionRequestMessage, CreateCompletionResponseUsage } from 'openai';
 import { assign, createMachine, interpret } from 'xstate';
 import {
 	chatList,
@@ -14,13 +8,13 @@ import {
 } from '~/store/chatList';
 import { store } from '~/store/store';
 
-type Context = {
+export type Context = {
 	id?: string;
-	openai?: OpenAIApi;
 	model: string;
 	apiKey?: string;
 	messages: ChatCompletionRequestMessageWithTimeStamp[];
 	usages: CreateCompletionResponseUsage[];
+	streamMessage?: string;
 };
 
 type Events =
@@ -30,7 +24,24 @@ type Events =
 	| { type: 'SET_ID'; id: string }
 	| { type: 'RESET' }
 	| { type: 'ADD_MESSAGES'; messages: ChatCompletionRequestMessage[] }
-	| { type: 'ADD_USAGES'; usages: CreateCompletionResponseUsage[] };
+	| { type: 'ADD_USAGES'; usages: CreateCompletionResponseUsage[] }
+	| { type: 'SET_USAGES'; usages: CreateCompletionResponseUsage[] }
+	| { type: 'ADD_STREAM_MESSAGE'; streamMessage: string }
+	| { type: 'RESET_STREAM_MESSAGE' };
+
+type StreamJson = {
+	id: string;
+	object: string;
+	created: number;
+	model: string;
+	choices: [
+		{
+			delta: { content: string };
+			index: number;
+			finish_reason: 'stop' | null;
+		}
+	];
+};
 
 export const chatMachine = createMachine(
 	{
@@ -49,7 +60,7 @@ export const chatMachine = createMachine(
 		states: {
 			idle: {
 				on: {
-					SET_API_TOKEN: { actions: ['setApiKey', 'setOpenAi'] },
+					SET_API_TOKEN: { actions: 'setApiKey' },
 					SET_ID: { actions: 'setId' },
 					INIT: 'initializing'
 				}
@@ -93,57 +104,71 @@ export const chatMachine = createMachine(
 				}
 			},
 			chatting: {
+				exit: ['resetStreamMessage'],
 				invoke: {
 					src:
-						({ id, openai, model, messages }) =>
+						({ model, messages, apiKey }) =>
 						(callback) => {
-							if (!openai) {
+							if (!apiKey) {
 								throw new Error('OpenAI not initialized');
 							}
 
-							openai
-								.createChatCompletion({
-									model: model,
-									// eslint-disable-next-line @typescript-eslint/no-unused-vars
-									messages: messages.map(({ timestamp, ...message }) => message)
-								})
-								.then((response) => {
-									const content = response.data.choices[0].message?.content;
-									const usage = response.data.usage;
-									if (content && usage && id) {
-										const message = { role: 'assistant', content } as ChatCompletionRequestMessage;
-										callback({
-											type: 'ADD_USAGES',
-											usages: [usage]
-										});
-										callback({
-											type: 'ADD_MESSAGES',
-											messages: [message]
-										});
-									}
-								})
-								.catch((error) => {
-									toastController
-										.create({
-											message: error.message,
-											duration: 20000,
-											color: 'danger'
-										})
-										.then((toast) => {
-											toast.present();
-											toast.onclick = () => toast.dismiss();
-										});
-									callback('READY');
+							(async () => {
+								const decoder = new TextDecoder('utf-8');
+								const completion = await fetch('https://api.openai.com/v1/chat/completions', {
+									headers: {
+										'Content-Type': 'application/json',
+										Authorization: `Bearer ${apiKey}`
+									},
+									method: 'POST',
+									body: JSON.stringify({
+										// eslint-disable-next-line @typescript-eslint/no-unused-vars
+										messages: messages.map(({ timestamp, ...message }) => message),
+										model: model,
+										stream: true
+									})
 								});
+
+								const reader = completion.body?.getReader();
+								if (!reader) return;
+
+								try {
+									const read = async (): Promise<any> => {
+										const { done, value } = await reader.read();
+										if (done) return reader.releaseLock();
+
+										const chunk = decoder.decode(value, { stream: true });
+										const json: StreamJson[] = chunk
+											.split('data:')
+											.map((data) => {
+												const trimData = data.trim();
+												if (trimData === '') return undefined;
+												if (trimData === '[DONE]') return undefined;
+												return JSON.parse(data.trim());
+											})
+											.filter((data) => data);
+
+										const streamMessage = json
+											.map((jn) => jn.choices.map((choice) => choice.delta.content).join(''))
+											.join('');
+										callback({ type: 'ADD_STREAM_MESSAGE', streamMessage });
+
+										return read();
+									};
+									await read();
+								} catch (e) {
+									console.error(e);
+								}
+
+								reader.releaseLock();
+								callback('READY');
+							})();
 						}
 				},
 				on: {
 					READY: 'ready',
-					ADD_MESSAGES: {
-						actions: 'addMessages',
-						target: 'ready'
-					},
-					ADD_USAGES: { actions: 'addUsages' }
+					SET_USAGES: { actions: 'setUsages' },
+					ADD_STREAM_MESSAGE: { actions: 'addStreamMessage' }
 				}
 			}
 		}
@@ -155,12 +180,6 @@ export const chatMachine = createMachine(
 			}),
 			setId: assign({
 				id: (_, event) => ('id' in event ? event.id : undefined)
-			}),
-			setOpenAi: assign({
-				openai: ({ apiKey }) => {
-					if (!apiKey) return;
-					return new OpenAIApi(new Configuration({ apiKey }));
-				}
 			}),
 			addMessages: assign({
 				messages: ({ id, messages }, event) => {
@@ -177,6 +196,55 @@ export const chatMachine = createMachine(
 				usages: ({ id, usages }, event) => {
 					if (!('usages' in event) || !id) return usages;
 					const results = [...usages, ...event.usages];
+					chatList.updateUsages(id, results);
+					return results;
+				}
+			}),
+			setUsages: assign({
+				usages: ({ id, usages }, event) => {
+					if (!('usages' in event) || !id) return usages;
+					const results = event.usages;
+					chatList.updateUsages(id, results);
+					return results;
+				}
+			}),
+			addStreamMessage: assign({
+				streamMessage: ({ streamMessage }, event) => {
+					if (!('streamMessage' in event)) return;
+					if (!streamMessage) return event.streamMessage;
+					return streamMessage + event.streamMessage;
+				}
+			}),
+			resetStreamMessage: assign({
+				streamMessage: () => undefined,
+				messages: ({ id, messages, streamMessage }) => {
+					if (!streamMessage || !id) return messages;
+					const results = [
+						...messages,
+						{
+							role: 'assistant',
+							content: streamMessage,
+							timestamp: Date.now()
+						} as ChatCompletionRequestMessage
+					];
+					chatList.updateMessages(id, results);
+					return results;
+				},
+				usages: ({ id, usages, messages, streamMessage }) => {
+					if (!streamMessage || !id) return usages;
+					const tokens = Math.floor(
+						messages
+							.map((message) => message.content.length)
+							.reduce((a, b) => a + b, streamMessage.length) / 0.75
+					);
+					const results = [
+						...usages,
+						{
+							prompt_tokens: tokens,
+							completion_tokens: tokens,
+							total_tokens: tokens
+						}
+					];
 					chatList.updateUsages(id, results);
 					return results;
 				}
