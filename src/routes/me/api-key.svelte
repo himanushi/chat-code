@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { _ } from 'svelte-i18n';
 	import Icon from '~/components/icon.svelte';
+	import { gotoNewChat } from '~/lib/gotoNewChat';
 	import { apiKey } from '~/store/apiKey';
 
 	let key: string | undefined = undefined;
@@ -35,4 +36,11 @@
 <ion-item>
 	<Icon name="info" color="blue" start />
 	<ion-label class="ion-text-wrap">{$_('open_api_settings.api_key_description')}</ion-label>
+</ion-item>
+<ion-item lines="none" disabled={!key}>
+	<Icon name="add_comment" fill start />
+	<ion-label class="ion-text-wrap">{$_('open_api_settings.new_chat_description')}</ion-label>
+	<ion-button disabled={!key} on:click={gotoNewChat}>
+		<ion-label>+ {$_('menu.new_chat')}</ion-label>
+	</ion-button>
 </ion-item>
