@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { _ } from 'svelte-i18n';
-	import { v4 as uuid } from 'uuid';
 	import Icon from '~/components/icon.svelte';
+	import { gotoNewChat } from '~/lib/gotoNewChat';
 	import { chatService } from '~/machines/chat-machine';
 	import { chatList } from '~/store/chatList';
 	import { searchText } from '~/store/searchText';
@@ -21,7 +21,7 @@
 			<ion-title>{$_('menu.title')}</ion-title>
 		</ion-toolbar>
 		<ion-menu-toggle auto-hide={false}>
-			<ion-card color="dark-gray" button on:click={() => goto(`/chat/${uuid()}`)}>
+			<ion-card color="dark-gray" button on:click={gotoNewChat}>
 				<ion-card-content> + {$_('menu.new_chat')} </ion-card-content>
 			</ion-card>
 		</ion-menu-toggle>

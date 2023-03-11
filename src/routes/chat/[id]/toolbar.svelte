@@ -1,13 +1,12 @@
 <script>
 	import Icon from '~/components/icon.svelte';
 	import { isMarkdown } from '~/store/isMarkdown';
-	import { v4 as uuid } from 'uuid';
-	import { goto } from '$app/navigation';
+	import { gotoNewChat } from '~/lib/gotoNewChat';
 </script>
 
 <ion-toolbar>
 	<ion-buttons slot="start">
-		<ion-button on:click={() => goto(`/chat/${uuid()}`)}>
+		<ion-button on:click={gotoNewChat}>
 			<Icon name="add_comment" fill />
 		</ion-button>
 		<ion-button
