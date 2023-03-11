@@ -229,6 +229,24 @@ export const chatMachine = createMachine(
 					];
 					chatList.updateMessages(id, results);
 					return results;
+				},
+				usages: ({ id, usages, messages, streamMessage }) => {
+					if (!streamMessage || !id) return usages;
+					const tokens = Math.floor(
+						messages
+							.map((message) => message.content.length)
+							.reduce((a, b) => a + b, streamMessage.length) * 0.75
+					);
+					const results = [
+						...usages,
+						{
+							prompt_tokens: tokens,
+							completion_tokens: tokens,
+							total_tokens: tokens
+						}
+					];
+					chatList.updateUsages(id, results);
+					return results;
 				}
 			}),
 			reset: assign({
