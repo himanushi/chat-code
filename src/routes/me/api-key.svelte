@@ -31,7 +31,7 @@
 </ion-item>
 <ion-item button target="_blank" href="https://platform.openai.com/account/api-keys">
 	<Icon name="link" color="yellow" start />
-	<ion-label>{$_('open_api_settings.api_key_link')}</ion-label>
+	<ion-label class="ion-text-wrap">{$_('open_api_settings.api_key_link')}</ion-label>
 </ion-item>
 <ion-item>
 	<Icon name="info" color="blue" start />
