@@ -11,7 +11,10 @@ const removeHttpLinks = () => (tree: any) => {
 		if (
 			node.tagName === 'a' &&
 			node.properties.href &&
-			(node.properties.href.startsWith('http://') || node.properties.href.startsWith('https://'))
+			(node.properties.href.startsWith('http://') ||
+				node.properties.href.startsWith('https://') ||
+				node.properties.href.startsWith('mailto:') ||
+				node.properties.href.startsWith('tel:'))
 		) {
 			parent.children.splice(parent.children.indexOf(node), 1, {
 				type: 'element',
