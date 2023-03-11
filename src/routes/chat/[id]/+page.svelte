@@ -10,6 +10,7 @@
 	import { currencyExchangeRate } from '~/store/currencyExchangeRate';
 	import Toolbar from './toolbar.svelte';
 	import { _ } from 'svelte-i18n';
+	import type { Components } from '@ionic/core';
 
 	export let data: PageData;
 
@@ -30,11 +31,16 @@
 		chatService.send({ type: 'SET_ID', id });
 	}
 
-	$: currency = (tokens * 0.000002 * $currencyExchangeRate).toFixed(2) + $currencyUnit;
+	let content: Components.IonContent | undefined;
+	$: if (content && $chatService && $chatService.context.streamMessage) {
+		content.scrollToBottom(300);
+	}
+
+	// $: currency = (tokens * 0.000002 * $currencyExchangeRate).toFixed(2) + $currencyUnit;
 </script>
 
 {#if $apiKey && $chatService}
-	<ion-content>
+	<ion-content bind:this={content}>
 		<ion-list>
 			{#each $chatService.context.messages as message}
 				<ChatItem {message} />
