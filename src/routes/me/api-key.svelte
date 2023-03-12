@@ -2,12 +2,17 @@
 	import { _ } from 'svelte-i18n';
 	import Icon from '~/components/icon.svelte';
 	import { gotoNewChat } from '~/lib/gotoNewChat';
+	import { chatService } from '~/machines/chat-machine';
 	import { apiKey } from '~/store/apiKey';
 
 	let key: string | undefined = undefined;
 
 	$: if (!key && $apiKey) {
 		key = $apiKey;
+	}
+
+	$: if ($apiKey) {
+		chatService.send({ type: 'SET_API_TOKEN', apiKey: $apiKey });
 	}
 </script>
 

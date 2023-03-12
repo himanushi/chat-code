@@ -1,3 +1,4 @@
+import { toastController } from '@ionic/core';
 import type { ChatCompletionRequestMessage, CreateCompletionResponseUsage } from 'openai';
 import { assign, createMachine, interpret } from 'xstate';
 import {
@@ -56,11 +57,13 @@ export const chatMachine = createMachine(
 			usages: []
 		},
 		initial: 'idle',
-		on: { SET_ID: { actions: 'setId', target: 'initializing' } },
+		on: {
+			SET_ID: { actions: 'setId', target: 'initializing' },
+			SET_API_TOKEN: { actions: 'setApiKey' }
+		},
 		states: {
 			idle: {
 				on: {
-					SET_API_TOKEN: { actions: 'setApiKey' },
 					SET_ID: { actions: 'setId' },
 					INIT: 'initializing'
 				}
@@ -130,7 +133,21 @@ export const chatMachine = createMachine(
 								});
 
 								const reader = completion.body?.getReader();
-								if (!reader) return;
+
+								if (completion.status !== 200 || !reader) {
+									toastController
+										.create({
+											message: `${completion.status}: Error connecting to OpenAI.`,
+											duration: 20000,
+											color: 'danger'
+										})
+										.then((toast) => {
+											toast.onclick = () => toast.dismiss();
+											toast.present();
+										});
+									callback('READY');
+									return;
+								}
 
 								try {
 									const read = async (): Promise<any> => {
