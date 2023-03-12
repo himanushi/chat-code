@@ -15,7 +15,7 @@
 	<ion-label> {$_('open_api_settings.title')} </ion-label>
 </ion-item-divider>
 <ion-item>
-	<Icon name="key" fill color="yellow" start />
+	<Icon name="key" color="yellow" start />
 	<ion-label>{$_('open_api_settings.api_key')}</ion-label>
 	<ion-input
 		type="password"
@@ -38,7 +38,7 @@
 	<ion-label class="ion-text-wrap">{$_('open_api_settings.api_key_description')}</ion-label>
 </ion-item>
 <ion-item lines="none" disabled={!key}>
-	<Icon name="add_comment" fill start />
+	<Icon name="add_comment" start />
 	<ion-label class="ion-text-wrap">{$_('open_api_settings.new_chat_description')}</ion-label>
 	<ion-button disabled={!key} on:click={gotoNewChat}>
 		<ion-label>+ {$_('menu.new_chat')}</ion-label>

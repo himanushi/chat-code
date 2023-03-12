@@ -56,7 +56,7 @@
 									chatList.delete(chat.id);
 								}}
 							>
-								<Icon name="delete" size="s" fill />
+								<Icon name="delete" size="s" />
 							</ion-button>
 						</ion-buttons>
 					</ion-item>
@@ -71,7 +71,7 @@
 			</ion-list-header>
 			<ion-menu-toggle auto-hide={false}>
 				<ion-item button on:click={() => goto('/me')} lines="none">
-					<Icon name="person" size="s" fill />
+					<Icon name="person" size="s" />
 					<ion-label>{$_('menu.my_account')}</ion-label>
 				</ion-item>
 			</ion-menu-toggle>

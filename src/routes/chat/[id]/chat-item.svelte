@@ -10,7 +10,6 @@
 	const itemColor = message.role === 'user' ? 'black' : 'dark-gray';
 	const icon = message.role === 'user' ? 'person' : 'smart_toy';
 	const iconColor = message.role === 'user' ? 'blue' : 'green';
-	const fill = message.role === 'user';
 
 	$: markedContent = '';
 	$: markdown(message.content, (err, result) => {
@@ -25,7 +24,7 @@
 </script>
 
 <ion-item color={itemColor} lines="none">
-	<Icon name={icon} {fill} color={iconColor} start />
+	<Icon name={icon} color={iconColor} start />
 	{#if message.timestamp}
 		<ion-note class="timestamp" slot="end">
 			{$date(new Date(message.timestamp), { format: 'medium' })}

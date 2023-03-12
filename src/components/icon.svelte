@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { IconNames } from '~/@types/icon';
 	export let name: IconNames;
-	export let fill = false;
 	export let size: 'l' | 'm' | 's' = 'm';
 	export let color: string | undefined = undefined;
 	export let start = false;
@@ -23,7 +22,7 @@
 <ion-label
 	bind:this={icon}
 	style="font-size: {sizeMap[size]}px;"
-	class={fill ? 'material-symbols-rounded-fill' : 'material-symbols-rounded'}
+	class="material-symbols-rounded-fill"
 	{color}
 	>{name}
 </ion-label>

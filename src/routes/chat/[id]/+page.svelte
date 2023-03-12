@@ -75,7 +75,7 @@
 					</ion-button>
 				{:else}
 					<ion-button disabled={matches($chatService, ['idle']) || !message} on:click={send}>
-						<Icon name="send" fill color="white" />
+						<Icon name="send" color="white" />
 					</ion-button>
 				{/if}
 			</ion-buttons>
@@ -84,7 +84,7 @@
 {:else}
 	<ion-content>
 		<ion-item button on:click={() => goto('/me')}>
-			<Icon fill name="warning" color="yellow" start />
+			<Icon name="warning" color="yellow" start />
 			<ion-label> {$_('chat.please_set_api_key')} </ion-label>
 		</ion-item>
 	</ion-content>

@@ -38,7 +38,7 @@
 		<ion-spinner name="dots" />
 	{/if}
 	{#if error}
-		<Icon name="error" fill color="red" />
+		<Icon name="error" color="red" />
 		<ion-text color="red">{error}</ion-text>
 	{/if}
 	{#if usage}

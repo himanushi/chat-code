@@ -7,7 +7,7 @@
 <ion-toolbar>
 	<ion-buttons slot="start">
 		<ion-button on:click={gotoNewChat}>
-			<Icon name="add_comment" fill />
+			<Icon name="add_comment" />
 		</ion-button>
 		<ion-button
 			color={$isMarkdown ? 'black' : 'gray'}

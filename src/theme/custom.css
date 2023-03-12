@@ -14,28 +14,6 @@ code.hljs {
 }
 
 @font-face {
-	font-family: 'Material Symbols Rounded';
-	font-style: normal;
-	font-weight: 400;
-	src: url(./google-material-symbols.woff2) format('woff2');
-}
-
-.material-symbols-rounded {
-	font-family: 'Material Symbols Rounded' !important;
-	font-weight: normal;
-	font-style: normal;
-	line-height: 1;
-	letter-spacing: normal;
-	text-transform: none;
-	display: inline-block;
-	white-space: nowrap;
-	word-wrap: normal;
-	direction: ltr;
-	-webkit-font-feature-settings: 'liga';
-	-webkit-font-smoothing: antialiased;
-}
-
-@font-face {
 	font-family: 'Material Symbols Rounded Fill';
 	font-style: normal;
 	font-weight: 400;

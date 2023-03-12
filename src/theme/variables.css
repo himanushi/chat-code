@@ -1,15 +1,8 @@
 /* Ionic Variables and Theming. For more info, please see:
 http://ionicframework.com/docs/theming/ */
 
-@font-face {
-	font-family: 'LINE Seed';
-	src: url('./LINESeedJP_OTF_Rg.woff2') format('woff2');
-}
-
 /** Ionic CSS Variables **/
 :root {
-	--ion-font-family: 'LINE Seed';
-
 	/** primary **/
 	--ion-color-primary: #ffffff;
 	--ion-color-primary-rgb: 255, 255, 255;
