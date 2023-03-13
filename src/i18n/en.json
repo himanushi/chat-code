@@ -25,7 +25,9 @@
 	"chat": {
 		"usage_tokens": "{tokens, plural, =0 {No tokens} one {1 token} other {{tokens} tokens}}, {currency}",
 		"input_placeholder": "Type your message here...",
-		"please_set_api_key": "Please set a API Key"
+		"please_set_api_key": "Please set a API Key",
+		"new_chat_button_tooltip": "Starting a new chat. 💬<br>Please note that exchanging messages frequently<br> in the same chat will increase usage charges. 💸",
+		"markdown_button_tooltip": "Disable Markdown formatting. 🍙"
 	},
 	"months": {
 		"long": [
