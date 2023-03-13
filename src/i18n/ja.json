@@ -26,8 +26,9 @@
 		"usage_tokens": "{tokens}トークン, {currency}",
 		"input_placeholder": "メッセージを入力してください",
 		"please_set_api_key": "API Key を設定してください",
-		"new_chat_button_tooltip": "新しいチャットを開始します 💬<br>同じチャット内でメッセージの<br>やりとりが多いと使用料金が高くなります 💸",
-		"markdown_button_tooltip": "マークダウン表示を解除します 🍙"
+		"new_chat_button_tooltip": "[新しいチャット開始]<br>新しいチャットを開始します。<br>同じチャット内でメッセージの<br>やりとりが多いと使用料金が高くなります。",
+		"markdown_button_tooltip": "[マークダウンモード]<br>マークダウン表示の有効無効を変更します。",
+		"conversation_mode_button_tooltip": "[対話モード]<br>対話モードが有効だと文脈を理解して返答します。<br>無効だと文脈を理解しない代わりに<br>使用料金を大幅に減らすことができます。"
 	},
 	"months": {
 		"long": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],

@@ -26,8 +26,9 @@
 		"usage_tokens": "{tokens, plural, =0 {No tokens} one {1 token} other {{tokens} tokens}}, {currency}",
 		"input_placeholder": "Type your message here...",
 		"please_set_api_key": "Please set a API Key",
-		"new_chat_button_tooltip": "Starting a new chat. 💬<br>Please note that exchanging messages frequently<br> in the same chat will increase usage charges. 💸",
-		"markdown_button_tooltip": "Disable Markdown formatting. 🍙"
+		"new_chat_button_tooltip": "[Start New Chat]<br>Start a new chat.<br>Be aware that chatting extensively <br>in the same chat could increase usage fees.",
+		"markdown_button_tooltip": "[Markdown Mode]<br>Toggle markdown display on and off.",
+		"conversation_mode_button_tooltip": "[Conversation Mode]<br>Enable conversation mode for context-aware responses.<br>Disable for significant reduction in usage fees,<br> but without context awareness."
 	},
 	"months": {
 		"long": [

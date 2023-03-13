@@ -4,6 +4,12 @@
 	import { gotoNewChat } from '~/lib/gotoNewChat';
 	import Tooltip from '~/components/tooltip.svelte';
 	import { _ } from 'svelte-i18n';
+	import { conversationMode } from '~/store/conversationMode';
+	import { chatService } from '~/machines/chat-machine';
+
+	$: if (chatService) {
+		chatService.send({ type: 'SET_CONVERSATION_MODE', conversationMode: $conversationMode });
+	}
 </script>
 
 <ion-toolbar>
@@ -19,6 +25,14 @@
 				on:click={() => isMarkdown.set(!$isMarkdown)}
 			>
 				<ion-icon name="logo-markdown" />
+			</ion-button>
+		</Tooltip>
+		<Tooltip message={$_('chat.conversation_mode_button_tooltip')}>
+			<ion-button
+				color={$conversationMode ? 'black' : 'gray'}
+				on:click={() => conversationMode.set(!$conversationMode)}
+			>
+				<Icon name="forum" />
 			</ion-button>
 		</Tooltip>
 	</ion-buttons>

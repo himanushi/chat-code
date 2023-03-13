@@ -16,6 +16,7 @@ export type Context = {
 	messages: ChatCompletionRequestMessageWithTimeStamp[];
 	usages: CreateCompletionResponseUsage[];
 	streamMessage?: string;
+	conversationMode: boolean;
 };
 
 type Events =
@@ -23,6 +24,7 @@ type Events =
 	| { type: 'READY' }
 	| { type: 'SET_API_TOKEN'; apiKey: string }
 	| { type: 'SET_ID'; id: string }
+	| { type: 'SET_CONVERSATION_MODE'; conversationMode: boolean }
 	| { type: 'RESET' }
 	| { type: 'ADD_MESSAGES'; messages: ChatCompletionRequestMessage[] }
 	| { type: 'ADD_USAGES'; usages: CreateCompletionResponseUsage[] }
@@ -54,12 +56,14 @@ export const chatMachine = createMachine(
 		context: {
 			model: 'gpt-3.5-turbo',
 			messages: [],
-			usages: []
+			usages: [],
+			conversationMode: true
 		},
 		initial: 'idle',
 		on: {
 			SET_ID: { actions: 'setId', target: 'initializing' },
-			SET_API_TOKEN: { actions: 'setApiKey' }
+			SET_API_TOKEN: { actions: 'setApiKey' },
+			SET_CONVERSATION_MODE: { actions: 'setConversationMode' }
 		},
 		states: {
 			idle: {
@@ -110,14 +114,15 @@ export const chatMachine = createMachine(
 				exit: ['resetStreamMessage'],
 				invoke: {
 					src:
-						({ model, messages, apiKey }) =>
+						({ model, messages: contextMessages, apiKey, conversationMode }) =>
 						(callback) => {
 							if (!apiKey) {
 								throw new Error('OpenAI not initialized');
 							}
 
 							(async () => {
-								const decoder = new TextDecoder('utf-8');
+								// eslint-disable-next-line @typescript-eslint/no-unused-vars
+								const messages = contextMessages.map(({ timestamp, ...message }) => message);
 								const completion = await fetch('https://api.openai.com/v1/chat/completions', {
 									headers: {
 										'Content-Type': 'application/json',
@@ -125,8 +130,7 @@ export const chatMachine = createMachine(
 									},
 									method: 'POST',
 									body: JSON.stringify({
-										// eslint-disable-next-line @typescript-eslint/no-unused-vars
-										messages: messages.map(({ timestamp, ...message }) => message),
+										messages: conversationMode ? messages : messages.slice(-1),
 										model: model,
 										stream: true
 									})
@@ -149,6 +153,7 @@ export const chatMachine = createMachine(
 									return;
 								}
 
+								const decoder = new TextDecoder('utf-8');
 								try {
 									const read = async (): Promise<any> => {
 										const { done, value } = await reader.read();
@@ -197,6 +202,10 @@ export const chatMachine = createMachine(
 			}),
 			setId: assign({
 				id: (_, event) => ('id' in event ? event.id : undefined)
+			}),
+			setConversationMode: assign({
+				conversationMode: (_, event) =>
+					'conversationMode' in event ? event.conversationMode : true
 			}),
 			addMessages: assign({
 				messages: ({ id, messages }, event) => {
@@ -247,10 +256,10 @@ export const chatMachine = createMachine(
 					chatList.updateMessages(id, results);
 					return results;
 				},
-				usages: ({ id, usages, messages, streamMessage }) => {
+				usages: ({ id, usages, messages, streamMessage, conversationMode }) => {
 					if (!streamMessage || !id) return usages;
 					const tokens = Math.floor(
-						messages
+						(conversationMode ? messages : messages.slice(-2))
 							.map((message) => message.content.length)
 							.reduce((a, b) => a + b, streamMessage.length) * 0.75
 					);
