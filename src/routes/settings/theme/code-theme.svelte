@@ -60,22 +60,22 @@ export  $initHighlight;
 <ion-item-divider>
 	<ion-label> {$_('code_theme.title')} </ion-label>
 </ion-item-divider>
-<ion-item lines="none">
-	<ion-select
-		placeholder="Select Code Theme"
-		value={$highlightCode}
-		on:ionChange={(event) => {
-			highlightCode.set(event.detail.value);
-		}}
-		on:click={() => addClickEvent()}
-	>
-		{#each codeList as code}
-			<ion-select-option value={code.value} on:click={() => console.log('aaa')}>
-				{code.name}
-			</ion-select-option>
-		{/each}
-	</ion-select>
-</ion-item>
+
+<ion-select
+	placeholder="Select Code Theme"
+	value={$highlightCode}
+	on:ionChange={(event) => {
+		highlightCode.set(event.detail.value);
+	}}
+	on:click={() => addClickEvent()}
+>
+	{#each codeList as code}
+		<ion-select-option value={code.value} on:click={() => console.log('aaa')}>
+			{code.name}
+		</ion-select-option>
+	{/each}
+</ion-select>
+
 <ion-item>
 	<ion-text>
 		{@html markedContent}

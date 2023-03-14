@@ -17,11 +17,11 @@
 </script>
 
 <ion-item-divider>
-	<ion-label> {$_('open_api_settings.title')} </ion-label>
+	<ion-label> {$_('openai_api_settings.title')} </ion-label>
 </ion-item-divider>
 <ion-item>
 	<Icon name="key" color="yellow" start />
-	<ion-label>{$_('open_api_settings.api_key')}</ion-label>
+	<ion-label>{$_('openai_api_settings.api_key')}</ion-label>
 	<ion-input
 		type="password"
 		placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
@@ -36,15 +36,15 @@
 </ion-item>
 <ion-item button target="_blank" href="https://platform.openai.com/account/api-keys">
 	<Icon name="link" color="yellow" start />
-	<ion-label class="ion-text-wrap">{$_('open_api_settings.api_key_link')}</ion-label>
+	<ion-label class="ion-text-wrap">{$_('openai_api_settings.api_key_link')}</ion-label>
 </ion-item>
 <ion-item>
 	<Icon name="info" color="blue" start />
-	<ion-label class="ion-text-wrap">{$_('open_api_settings.api_key_description')}</ion-label>
+	<ion-label class="ion-text-wrap">{$_('openai_api_settings.api_key_description')}</ion-label>
 </ion-item>
 <ion-item lines="none" disabled={!key}>
 	<Icon name="add_comment" start />
-	<ion-label class="ion-text-wrap">{$_('open_api_settings.new_chat_description')}</ion-label>
+	<ion-label class="ion-text-wrap">{$_('openai_api_settings.new_chat_description')}</ion-label>
 	<ion-button disabled={!key} on:click={gotoNewChat}>
 		<ion-label>+ {$_('menu.new_chat')}</ion-label>
 	</ion-button>
