@@ -66,13 +66,10 @@
 	</ion-content>
 	<ion-footer>
 		<ion-list>
-			<ion-list-header>
-				<ion-label>{$_('menu.settings')}</ion-label>
-			</ion-list-header>
 			<ion-menu-toggle auto-hide={false}>
-				<ion-item button on:click={() => goto('/me')} lines="none">
-					<Icon name="person" size="s" />
-					<ion-label>{$_('menu.my_account')}</ion-label>
+				<ion-item button on:click={() => goto('/settings')} lines="none">
+					<Icon name="settings" size="s" />
+					<ion-label>{$_('menu.settings')}</ion-label>
 				</ion-item>
 			</ion-menu-toggle>
 		</ion-list>

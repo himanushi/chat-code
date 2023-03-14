@@ -3,6 +3,6 @@
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		goto('/me');
+		goto('/settings/openai');
 	});
 </script>

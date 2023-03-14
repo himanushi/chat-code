@@ -1,4 +1,9 @@
 {
+	"settings": {
+		"title": "Settings",
+		"openai_settings": "OpenAI settings",
+		"theme_settings": "Theme settings"
+	},
 	"open_api_settings": {
 		"title": "OpenAI settings",
 		"api_key": "API Key",
