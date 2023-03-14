@@ -6,6 +6,7 @@
 	import { _ } from 'svelte-i18n';
 	import { conversationMode } from '~/store/conversationMode';
 	import { chatService } from '~/machines/chat-machine';
+	import RobotButton from './robot-button.svelte';
 
 	$: if (chatService) {
 		chatService.send({ type: 'SET_CONVERSATION_MODE', conversationMode: $conversationMode });
@@ -19,6 +20,7 @@
 				<Icon name="add_comment" />
 			</ion-button>
 		</Tooltip>
+		<RobotButton />
 		<Tooltip message={$_('chat.markdown_button_tooltip')}>
 			<ion-button
 				color={$isMarkdown ? 'black' : 'gray'}

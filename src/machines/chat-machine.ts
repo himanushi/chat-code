@@ -17,6 +17,8 @@ export type Context = {
 	usages: CreateCompletionResponseUsage[];
 	streamMessage?: string;
 	conversationMode: boolean;
+	temperature: number;
+	topP: number;
 };
 
 type Events =
@@ -24,6 +26,9 @@ type Events =
 	| { type: 'READY' }
 	| { type: 'SET_API_TOKEN'; apiKey: string }
 	| { type: 'SET_ID'; id: string }
+	| { type: 'SET_MODEL'; model: string }
+	| { type: 'SET_TEMPERATURE'; temperature: number }
+	| { type: 'SET_TOP_P'; topP: number }
 	| { type: 'SET_CONVERSATION_MODE'; conversationMode: boolean }
 	| { type: 'RESET' }
 	| { type: 'ADD_MESSAGES'; messages: ChatCompletionRequestMessage[] }
@@ -57,13 +62,18 @@ export const chatMachine = createMachine(
 			model: 'gpt-3.5-turbo',
 			messages: [],
 			usages: [],
-			conversationMode: true
+			conversationMode: true,
+			temperature: 1,
+			topP: 1
 		},
 		initial: 'idle',
 		on: {
 			SET_ID: { actions: 'setId', target: 'initializing' },
 			SET_API_TOKEN: { actions: 'setApiKey' },
-			SET_CONVERSATION_MODE: { actions: 'setConversationMode' }
+			SET_CONVERSATION_MODE: { actions: 'setConversationMode' },
+			SET_MODEL: { actions: 'setModel' },
+			SET_TEMPERATURE: { actions: 'setTemperature' },
+			SET_TOP_P: { actions: 'setTopP' }
 		},
 		states: {
 			idle: {
@@ -114,7 +124,7 @@ export const chatMachine = createMachine(
 				exit: ['resetStreamMessage'],
 				invoke: {
 					src:
-						({ model, messages: contextMessages, apiKey, conversationMode }) =>
+						({ model, messages: contextMessages, apiKey, conversationMode, temperature, topP }) =>
 						(callback) => {
 							if (!apiKey) {
 								throw new Error('OpenAI not initialized');
@@ -132,7 +142,9 @@ export const chatMachine = createMachine(
 									body: JSON.stringify({
 										messages: conversationMode ? messages : messages.slice(-1),
 										model: model,
-										stream: true
+										stream: true,
+										temperature,
+										top_p: topP
 									})
 								});
 
@@ -206,6 +218,15 @@ export const chatMachine = createMachine(
 			setConversationMode: assign({
 				conversationMode: (_, event) =>
 					'conversationMode' in event ? event.conversationMode : true
+			}),
+			setModel: assign({
+				model: (_, event) => ('model' in event ? event.model : 'gpt-3.5-turbo')
+			}),
+			setTemperature: assign({
+				temperature: (_, event) => ('temperature' in event ? event.temperature : 1)
+			}),
+			setTopP: assign({
+				topP: (_, event) => ('topP' in event ? event.topP : 1)
 			}),
 			addMessages: assign({
 				messages: ({ id, messages }, event) => {
