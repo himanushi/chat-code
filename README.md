@@ -1,5 +1,7 @@
 # Chat Code: ChatGPT-like Chat Service
 
+[日本語](https://github.com/himanushi/chat-code/blob/main/README.ja.md)
+
 <img width="743" alt="スクリーンショット 2023-03-15 7 09 14" src="https://user-images.githubusercontent.com/27812830/225153626-1f81afa6-c06a-4cfb-9340-79999503b3a1.png">
 
 ChatCode is a chat service that aims to provide a seamless and intuitive chatting experience for individuals and businesses alike. With features such as markdown support, usage fee confirmation, multi-language support, code-theming, and configurable OpenAI API parameters, our chat service is designed to meet a wide range of customer needs.
