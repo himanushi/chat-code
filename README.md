@@ -12,7 +12,7 @@ Our chat service has built-in support for markdown formatting, allowing users to
 
 ### Usage fee confirmation
 
-When you use ChatCode, you'll always know the fee charged for using our service. Our chat service will confirm the fee charged for every use in a clear and transparent manner.
+When you use ChatCode, you'll always know the fee charged for using our service. Our chat service will confirm the fee charged for every use in a clear and transparent manner. We support a variety of currencies from different countries.
 
 ### Multi-language support
 
