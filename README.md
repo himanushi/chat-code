@@ -1,38 +1,45 @@
-# create-svelte
+# ChatCode: ChatGPT-like Chat Service
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+ChatCode is a chat service that aims to provide a seamless and intuitive chatting experience for individuals and businesses alike. With features such as markdown support, usage fee confirmation, multi-language support, code-theming, and configurable OpenAI API parameters, our chat service is designed to meet a wide range of customer needs.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Markdown support
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+Our chat service has built-in support for markdown formatting, allowing users to add rich text formatting such as bold, italic, and hyperlink to their messages.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+### Usage fee confirmation
 
-## Developing
+When you use ChatCode, you'll always know the fee charged for using our service. Our chat service will confirm the fee charged for every use in a clear and transparent manner.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Multi-language support
 
-```bash
-npm run dev
+ChatCode supports multiple languages, making it easier for global users to communicate and collaborate with people all over the world. Our chat service offers language support for English and Japanese.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+### Code-theming
 
-## Building
+Customizing your chat experience has never been easier with ChatCode's code theming feature. You can choose from a wide variety of themes for your chat assistant's appearance as per your will.
 
-To create a production version of your app:
+### OpenAI API parameters configuration
 
-```bash
-npm run build
-```
+Other than these, ChatCode offers configurable parameters for OpenAI APIs used for various functions like natural response to the conversations, language processing, and many more.
 
-You can preview the production build with `npm run preview`.
+## Usage
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+By entering the OpenAI API Key, users can start chatting immediately on the ChatCode chat service.
+
+## License
+
+ChatCode is released under the MIT License. See the LICENSE.md file for details.
+
+## Contributing
+
+We welcome contributions from the community! To get started, please fork the ChatCode repository and submit a pull request with your proposed changes.
+
+## Feedback
+
+Please feel free to share your thoughts and opinions on our chat service. Your feedback is important to us and we value your input. You can contact us at any time with your suggestions and ideas, and we will work to incorporate them into our service to make it even better. Thank you for helping us improve!
+
+## Author
+
+ChatCode is developed and maintained by himanushi. Contact us at [@himanushi](https://twitter.com/himanushi777) for inquiries.

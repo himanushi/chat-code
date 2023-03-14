@@ -9,6 +9,10 @@
 	user-select: text;
 }
 
+.clickable {
+	cursor: pointer;
+}
+
 code.hljs {
 	border-radius: 6px;
 }

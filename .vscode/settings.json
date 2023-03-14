@@ -18,6 +18,7 @@
 	"eslint.validate": ["javascript", "typescript", "svelte"],
 	"stylelint.validate": ["css", "postcss", "svelte", "scss"],
 	"cSpell.words": [
+		"himanushi",
 		"OPENAI",
 		"searchbar",
 		"xstate"

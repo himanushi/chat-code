@@ -19,3 +19,21 @@
 		</ion-item>
 	</ion-list>
 </ion-content>
+<ion-footer>
+	<ion-toolbar>
+		<ion-note
+			class="clickable"
+			slot="end"
+			on:click={() => goto('https://github.com/himanushi/chat-code')}
+		>
+			Github{'|'}
+		</ion-note>
+		<ion-note
+			class="clickable"
+			slot="end"
+			on:click={() => goto('https://twitter.com/himanushi777')}
+		>
+			@himanushi777
+		</ion-note>
+	</ion-toolbar>
+</ion-footer>
