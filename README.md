@@ -1,4 +1,4 @@
-# ChatCode: ChatGPT-like Chat Service
+# Chat Code: ChatGPT-like Chat Service
 
 <img width="743" alt="スクリーンショット 2023-03-15 7 09 14" src="https://user-images.githubusercontent.com/27812830/225153626-1f81afa6-c06a-4cfb-9340-79999503b3a1.png">
 
