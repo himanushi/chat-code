@@ -143,8 +143,8 @@ export const chatMachine = createMachine(
 										messages: conversationMode ? messages : messages.slice(-1),
 										model: model,
 										stream: true,
-										temperature,
-										top_p: topP
+										temperature: temperature ?? 1,
+										top_p: topP ?? 1
 									})
 								});
 
