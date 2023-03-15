@@ -5,7 +5,8 @@ import {
 	chatList,
 	chatListStoreId,
 	type ChatCompletionRequestMessageWithTimeStamp,
-	type ChatListType
+	type ChatListType,
+	type CreateCompletionResponseUsageWithModel
 } from '~/store/chatList';
 import { store } from '~/store/store';
 
@@ -14,7 +15,7 @@ export type Context = {
 	model: string;
 	apiKey?: string;
 	messages: ChatCompletionRequestMessageWithTimeStamp[];
-	usages: CreateCompletionResponseUsage[];
+	usages: CreateCompletionResponseUsageWithModel[];
 	streamMessage?: string;
 	conversationMode: boolean;
 	temperature: number;
@@ -51,13 +52,15 @@ type StreamJson = {
 	];
 };
 
+const id = 'chat';
+
 export const chatMachine = createMachine(
 	{
 		schema: {
 			context: {} as Context,
 			events: {} as Events
 		},
-		id: 'chat',
+		id,
 		context: {
 			model: 'gpt-3.5-turbo',
 			messages: [],
@@ -151,9 +154,17 @@ export const chatMachine = createMachine(
 								const reader = completion.body?.getReader();
 
 								if (completion.status !== 200 || !reader) {
+									let message = 'Error connecting to OpenAI.';
+									if (completion.status === 400)
+										message = 'The specified model exceeds the maximum character limit.';
+									else if (completion.status === 401) message = 'Invalid API key.';
+									else if (completion.status === 404)
+										message = 'You do not have permission to reference the model.';
+									else if (completion.status === 429)
+										message = 'Too many requests. Please try again later.';
 									toastController
 										.create({
-											message: `${completion.status}: Error connecting to OpenAI.`,
+											message: `${completion.status}: ${message}`,
 											duration: 20000,
 											color: 'danger'
 										})
@@ -277,19 +288,19 @@ export const chatMachine = createMachine(
 					chatList.updateMessages(id, results);
 					return results;
 				},
-				usages: ({ id, usages, messages, streamMessage, conversationMode }) => {
+				usages: ({ id, usages, messages, streamMessage, conversationMode, model }) => {
 					if (!streamMessage || !id) return usages;
-					const tokens = Math.floor(
-						(conversationMode ? messages : messages.slice(-2))
-							.map((message) => message.content.length)
-							.reduce((a, b) => a + b, streamMessage.length) * 0.75
-					);
+					const completion_tokens = streamMessage.length;
+					const prompt_tokens = (conversationMode ? messages : messages.slice(-1))
+						.map((message) => message.content.length)
+						.reduce((a, b) => a + b, 0);
 					const results = [
 						...usages,
 						{
-							prompt_tokens: tokens,
-							completion_tokens: tokens,
-							total_tokens: tokens
+							prompt_tokens,
+							completion_tokens,
+							total_tokens: completion_tokens + prompt_tokens,
+							model
 						}
 					];
 					chatList.updateUsages(id, results);
