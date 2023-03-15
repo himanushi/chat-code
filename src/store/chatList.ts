@@ -6,9 +6,13 @@ export type ChatCompletionRequestMessageWithTimeStamp = ChatCompletionRequestMes
 	timestamp?: number;
 };
 
+export type CreateCompletionResponseUsageWithModel = CreateCompletionResponseUsage & {
+	model?: string;
+};
+
 export type ContentType = {
 	messages: ChatCompletionRequestMessageWithTimeStamp[];
-	usages: CreateCompletionResponseUsage[];
+	usages: CreateCompletionResponseUsageWithModel[];
 };
 
 export type ChatType = {
@@ -65,7 +69,7 @@ const createChatList = () => {
 				return object;
 			});
 		},
-		updateUsages: (id: string, usages: CreateCompletionResponseUsage[]) => {
+		updateUsages: (id: string, usages: CreateCompletionResponseUsageWithModel[]) => {
 			update((object) => {
 				const prevValue = object.find((item) => item.id === id);
 				if (!prevValue) return object;

@@ -41,9 +41,20 @@
 			{/each}
 		</ion-select>
 		<ion-item lines="none">
-			<ion-label> Pricing </ion-label>
+			<ion-label>
+				{models.find((m) => m.name === $openaiModel)?.description}
+			</ion-label>
+		</ion-item>
+		<ion-item lines="none">
+			<ion-label> Prompt Price </ion-label>
 			<ion-label slot="end">
-				$ {models.find((m) => m.name === $openaiModel)?.price} / 1 Token
+				$ {models.find((m) => m.name === $openaiModel)?.promptPrice} / 1 Token
+			</ion-label>
+		</ion-item>
+		<ion-item lines="none">
+			<ion-label> Completion Price </ion-label>
+			<ion-label slot="end">
+				$ {models.find((m) => m.name === $openaiModel)?.completionPrice} / 1 Token
 			</ion-label>
 		</ion-item>
 		<ion-item>

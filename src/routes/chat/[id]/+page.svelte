@@ -11,6 +11,7 @@
 	import Toolbar from './toolbar.svelte';
 	import { _ } from 'svelte-i18n';
 	import type { Components } from '@ionic/core';
+	import { calcCurrency } from '~/lib/calcCurrency';
 
 	export let data: PageData;
 
@@ -20,9 +21,6 @@
 		message = '';
 	};
 
-	$: tokens = $chatService
-		? $chatService.context.usages.map((u) => u.total_tokens).reduce((a, b) => a + b, 0)
-		: 0;
 	$: id = data.id;
 	$: if (id && $apiKey && $chatService && matches($chatService, ['idle'])) {
 		chatService.send([{ type: 'SET_API_TOKEN', apiKey: $apiKey }, { type: 'SET_ID', id }, 'INIT']);
@@ -36,7 +34,17 @@
 		content.scrollToBottom(300);
 	}
 
-	$: currency = (tokens * 0.000002 * $currencyExchangeRate).toFixed(2) + $currencyUnit;
+	let tokens = 0;
+	let currency = '';
+	$: if ($chatService && $chatService.context.usages) {
+		const result = calcCurrency({
+			usages: $chatService.context.usages,
+			currencyExchangeRate: $currencyExchangeRate,
+			currencyUnit: $currencyUnit
+		});
+		tokens = result.tokens;
+		currency = result.currency;
+	}
 </script>
 
 {#if $apiKey && $chatService}
@@ -70,8 +78,8 @@
 			/>
 			<ion-buttons slot="end">
 				{#if matches($chatService, ['chatting'])}
-					<ion-button disabled>
-						<ion-spinner name="bubbles" />
+					<ion-button on:click={() => chatService.send('READY')}>
+						<Icon name="cancel" color="red" />
 					</ion-button>
 				{:else}
 					<ion-button disabled={matches($chatService, ['idle']) || !message} on:click={send}>
