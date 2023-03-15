@@ -78,8 +78,8 @@
 			/>
 			<ion-buttons slot="end">
 				{#if matches($chatService, ['chatting'])}
-					<ion-button disabled>
-						<ion-spinner name="bubbles" />
+					<ion-button on:click={() => chatService.send('READY')}>
+						<Icon name="cancel" color="red" />
 					</ion-button>
 				{:else}
 					<ion-button disabled={matches($chatService, ['idle']) || !message} on:click={send}>
