@@ -16,7 +16,7 @@
 </script>
 
 <Tooltip message={$_('chat.robot_button_tooltip')}>
-	<ion-button id="robot-modal" on:click={() => console.log('')}>
+	<ion-button id="robot-modal">
 		<Icon name="smart_toy" />
 	</ion-button>
 </Tooltip>
