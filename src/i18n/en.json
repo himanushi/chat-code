@@ -37,7 +37,9 @@
 		"new_chat_button_tooltip": "[Start New Chat]<br>Start a new chat.<br>Be aware that chatting extensively <br>in the same chat could increase usage fees.",
 		"markdown_button_tooltip": "[Markdown Mode]<br>Toggle markdown display on and off.",
 		"robot_button_tooltip": "[OpenAI Configuration Change]<br>You can change various parameters.",
-		"conversation_mode_button_tooltip": "[Conversation Mode]<br>Enable conversation mode for context-aware responses.<br>Disable for significant reduction in usage fees,<br> but without context awareness."
+		"conversation_mode_button_tooltip": "[Conversation Mode]<br>Enable conversation mode for context-aware responses.<br>Disable for significant reduction in usage fees,<br> but without context awareness.",
+		"conversation_voice_mode_button_tooltip": "[Vice Mode]<br>We will have a conversation using voice.<br>To exit, please press the voice dialogue mode button again.<br>If you want to change the language used in the conversation, please change the language setting in the upper right corner of the screen.",
+		"voice_recording": "Recording..."
 	},
 	"months": {
 		"long": [
