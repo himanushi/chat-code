@@ -7,6 +7,7 @@
 	import { conversationMode } from '~/store/conversationMode';
 	import { chatService } from '~/machines/chat-machine';
 	import RobotButton from './robot-button.svelte';
+	import VoiceButton from './voice-button.svelte';
 
 	$: if (chatService) {
 		chatService.send({ type: 'SET_CONVERSATION_MODE', conversationMode: $conversationMode });
@@ -37,5 +38,6 @@
 				<Icon name="forum" />
 			</ion-button>
 		</Tooltip>
+		<VoiceButton />
 	</ion-buttons>
 </ion-toolbar>
