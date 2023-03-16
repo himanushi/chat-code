@@ -84,6 +84,8 @@
 				on:ionChange={(e) => {
 					if (typeof e.detail.value === 'string' && e.detail.value !== '') {
 						openaiMaxTokens.set(parseInt(e.detail.value));
+					} else {
+						openaiMaxTokens.set(undefined);
 					}
 				}}
 			/>

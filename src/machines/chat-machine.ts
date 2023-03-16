@@ -20,7 +20,7 @@ export type Context = {
 	conversationMode: boolean;
 	temperature: number;
 	topP: number;
-	maxTokens: number;
+	maxTokens?: number;
 };
 
 type Events =
@@ -29,7 +29,7 @@ type Events =
 	| { type: 'SET_API_TOKEN'; apiKey: string }
 	| { type: 'SET_ID'; id: string }
 	| { type: 'SET_MODEL'; model: string }
-	| { type: 'SET_MAX_TOKENS'; maxTokens: number }
+	| { type: 'SET_MAX_TOKENS'; maxTokens?: number }
 	| { type: 'SET_TEMPERATURE'; temperature: number }
 	| { type: 'SET_TOP_P'; topP: number }
 	| { type: 'SET_CONVERSATION_MODE'; conversationMode: boolean }
@@ -69,8 +69,7 @@ export const chatMachine = createMachine(
 			usages: [],
 			conversationMode: true,
 			temperature: 1,
-			topP: 1,
-			maxTokens: 4000
+			topP: 1
 		},
 		initial: 'idle',
 		on: {
@@ -160,7 +159,7 @@ export const chatMachine = createMachine(
 										stream: true,
 										temperature: temperature ?? 1,
 										top_p: topP ?? 1,
-										max_tokens: maxTokens ?? 4000
+										...(maxTokens ? { max_tokens: maxTokens } : {})
 									})
 								});
 
@@ -247,7 +246,7 @@ export const chatMachine = createMachine(
 				model: (_, event) => ('model' in event ? event.model : 'gpt-3.5-turbo')
 			}),
 			setMaxTokens: assign({
-				maxTokens: (_, event) => ('maxTokens' in event ? event.maxTokens : 4000)
+				maxTokens: (_, event) => ('maxTokens' in event ? event.maxTokens : undefined)
 			}),
 			setTemperature: assign({
 				temperature: (_, event) => ('temperature' in event ? event.temperature : 1)
