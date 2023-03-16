@@ -70,7 +70,7 @@ export const chatMachine = createMachine(
 			conversationMode: true,
 			temperature: 1,
 			topP: 1,
-			maxTokens: 4096
+			maxTokens: 4000
 		},
 		initial: 'idle',
 		on: {
@@ -160,7 +160,7 @@ export const chatMachine = createMachine(
 										stream: true,
 										temperature: temperature ?? 1,
 										top_p: topP ?? 1,
-										max_tokens: maxTokens ?? 4096
+										max_tokens: maxTokens ?? 4000
 									})
 								});
 
@@ -247,7 +247,7 @@ export const chatMachine = createMachine(
 				model: (_, event) => ('model' in event ? event.model : 'gpt-3.5-turbo')
 			}),
 			setMaxTokens: assign({
-				maxTokens: (_, event) => ('maxTokens' in event ? event.maxTokens : 4096)
+				maxTokens: (_, event) => ('maxTokens' in event ? event.maxTokens : 4000)
 			}),
 			setTemperature: assign({
 				temperature: (_, event) => ('temperature' in event ? event.temperature : 1)
