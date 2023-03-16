@@ -91,7 +91,7 @@
 	</ion-footer>
 {:else}
 	<ion-content>
-		<ion-item button on:click={() => goto('/me')}>
+		<ion-item button on:click={() => goto('/settings/openai')}>
 			<Icon name="warning" color="yellow" start />
 			<ion-label> {$_('chat.please_set_api_key')} </ion-label>
 		</ion-item>
