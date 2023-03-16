@@ -4,6 +4,7 @@
 	import Icon from '~/components/icon.svelte';
 	import Tooltip from '~/components/tooltip.svelte';
 	import { chatService } from '~/machines/chat-machine';
+	import { openaiMaxTokens, defaultValue as defaultMaxTokens } from '~/store/openaiMaxTokens';
 	import { openaiModel, models, defaultValue as defaultModel } from '~/store/openaiModel';
 	import { openaiTemperature, defaultValue as defaultTemperature } from '~/store/openaiTemperature';
 	import { openaiTopP, defaultValue as defaultTopP } from '~/store/openaiTopP';
@@ -11,6 +12,7 @@
 	let modal: Components.IonModal;
 
 	$: chatService.send({ type: 'SET_MODEL', model: $openaiModel });
+	$: chatService.send({ type: 'SET_MAX_TOKENS', maxTokens: $openaiMaxTokens });
 	$: chatService.send({ type: 'SET_TEMPERATURE', temperature: $openaiTemperature });
 	$: chatService.send({ type: 'SET_TOP_P', topP: $openaiTopP });
 </script>
@@ -61,6 +63,35 @@
 			<ion-button slot="end" color="red" on:click={() => openaiModel.set(defaultModel)}>
 				<Icon name="redo" size="s" />
 				<ion-label> {$_('openai_api_settings.redo')} </ion-label>
+			</ion-button>
+		</ion-item>
+
+		<ion-list-header>
+			<ion-label> Max Tokens </ion-label>
+		</ion-list-header>
+		<ion-item lines="none">
+			<ion-label class="ion-text-wrap">
+				{$_('openai_api_settings.max_tokens_description')}
+			</ion-label>
+		</ion-item>
+		<ion-item lines="none">
+			<ion-input
+				value={$openaiMaxTokens}
+				type="number"
+				max={models.find((m) => m.name === $openaiModel)?.maxTokens ?? 4096}
+				min={0}
+				placeholder="Input Max Tokens"
+				on:ionChange={(e) => {
+					if (typeof e.detail.value === 'string' && e.detail.value !== '') {
+						openaiMaxTokens.set(parseInt(e.detail.value));
+					}
+				}}
+			/>
+		</ion-item>
+		<ion-item lines="none">
+			<ion-button slot="end" color="red" on:click={() => openaiMaxTokens.set(defaultMaxTokens)}>
+				<Icon name="redo" size="s" />
+				<ion-label>{$_('openai_api_settings.redo')}</ion-label>
 			</ion-button>
 		</ion-item>
 
