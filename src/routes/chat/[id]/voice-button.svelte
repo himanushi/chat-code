@@ -109,7 +109,11 @@
 
 	let useful = false;
 	onMount(() => {
-		if ('webkitSpeechRecognition' in window) {
+		if (
+			'webkitSpeechRecognition' in window &&
+			'speechSynthesis' in window &&
+			'SpeechSynthesisUtterance' in window
+		) {
 			useful = true;
 		}
 	});
