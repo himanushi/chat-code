@@ -20,6 +20,7 @@ export type Context = {
 	conversationMode: boolean;
 	temperature: number;
 	topP: number;
+	maxTokens: number;
 };
 
 type Events =
@@ -28,6 +29,7 @@ type Events =
 	| { type: 'SET_API_TOKEN'; apiKey: string }
 	| { type: 'SET_ID'; id: string }
 	| { type: 'SET_MODEL'; model: string }
+	| { type: 'SET_MAX_TOKENS'; maxTokens: number }
 	| { type: 'SET_TEMPERATURE'; temperature: number }
 	| { type: 'SET_TOP_P'; topP: number }
 	| { type: 'SET_CONVERSATION_MODE'; conversationMode: boolean }
@@ -67,7 +69,8 @@ export const chatMachine = createMachine(
 			usages: [],
 			conversationMode: true,
 			temperature: 1,
-			topP: 1
+			topP: 1,
+			maxTokens: 4096
 		},
 		initial: 'idle',
 		on: {
@@ -75,6 +78,7 @@ export const chatMachine = createMachine(
 			SET_API_TOKEN: { actions: 'setApiKey' },
 			SET_CONVERSATION_MODE: { actions: 'setConversationMode' },
 			SET_MODEL: { actions: 'setModel' },
+			SET_MAX_TOKENS: { actions: 'setMaxTokens' },
 			SET_TEMPERATURE: { actions: 'setTemperature' },
 			SET_TOP_P: { actions: 'setTopP' }
 		},
@@ -127,7 +131,15 @@ export const chatMachine = createMachine(
 				exit: ['resetStreamMessage'],
 				invoke: {
 					src:
-						({ model, messages: contextMessages, apiKey, conversationMode, temperature, topP }) =>
+						({
+							model,
+							messages: contextMessages,
+							apiKey,
+							conversationMode,
+							temperature,
+							topP,
+							maxTokens
+						}) =>
 						(callback) => {
 							if (!apiKey) {
 								throw new Error('OpenAI not initialized');
@@ -147,7 +159,8 @@ export const chatMachine = createMachine(
 										model: model,
 										stream: true,
 										temperature: temperature ?? 1,
-										top_p: topP ?? 1
+										top_p: topP ?? 1,
+										max_tokens: maxTokens ?? 4096
 									})
 								});
 
@@ -232,6 +245,9 @@ export const chatMachine = createMachine(
 			}),
 			setModel: assign({
 				model: (_, event) => ('model' in event ? event.model : 'gpt-3.5-turbo')
+			}),
+			setMaxTokens: assign({
+				maxTokens: (_, event) => ('maxTokens' in event ? event.maxTokens : 4096)
 			}),
 			setTemperature: assign({
 				temperature: (_, event) => ('temperature' in event ? event.temperature : 1)
