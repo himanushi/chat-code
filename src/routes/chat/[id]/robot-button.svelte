@@ -78,7 +78,7 @@
 			<ion-input
 				value={$openaiMaxTokens}
 				type="number"
-				max={models.find((m) => m.name === $openaiModel)?.maxTokens ?? 4096}
+				max={models.find((m) => m.name === $openaiModel)?.maxTokens ?? 4000}
 				min={0}
 				placeholder="Input Max Tokens"
 				on:ionChange={(e) => {
