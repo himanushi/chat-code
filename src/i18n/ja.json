@@ -4,6 +4,17 @@
 		"openai_settings": "OpenAI 設定",
 		"theme_settings": "テーマ設定"
 	},
+	"message_templates": {
+		"no_templates": "なし",
+		"reset_button_description": "[テンプレートリセット]<br>テンプレートを使用しません。",
+		"add_button_description": "[テンプレート作成]<br>テンプレートを作成します。<br>テンプレートを選択している場合は自動でテキストの先頭に追加されます。会話モードが ON の場合は、初めのメッセージのみ、 OFF の場合は毎回追加されます。",
+		"edit_button_description": "[テンプレート編集]<br>現在選択しているテンプレートを編集します。",
+		"delete_button_description": "[テンプレート削除]<br>現在選択しているテンプレートを削除します。",
+		"add_title": "作成",
+		"edit_title": "更新",
+		"modal_title": "タイトル",
+		"modal_message": "テンプレート"
+	},
 	"openai_api_settings": {
 		"title": "OpenAI 設定",
 		"api_key": "API Key",
