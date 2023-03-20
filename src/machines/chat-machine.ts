@@ -36,6 +36,7 @@ type Events =
 	| { type: 'RESET' }
 	| { type: 'ADD_MESSAGES'; messages: ChatCompletionRequestMessage[] }
 	| { type: 'DELETE_MESSAGE'; index: number }
+	| { type: 'EDIT_MESSAGE'; index: number; content: string }
 	| { type: 'ADD_USAGES'; usages: CreateCompletionResponseUsage[] }
 	| { type: 'SET_USAGES'; usages: CreateCompletionResponseUsage[] }
 	| { type: 'ADD_STREAM_MESSAGE'; streamMessage: string }
@@ -87,6 +88,7 @@ export const chatMachine = createMachine(
 		},
 		initial: 'idle',
 		on: {
+			EDIT_MESSAGE: { actions: 'editMessage' },
 			DELETE_MESSAGE: { actions: 'deleteMessage' },
 			SET_ID: { actions: 'setId', target: 'initializing' },
 			SET_API_TOKEN: { actions: 'setApiKey' },
@@ -280,6 +282,20 @@ export const chatMachine = createMachine(
 			}),
 			setTopP: assign({
 				topP: (_, event) => ('topP' in event ? event.topP : 1)
+			}),
+			editMessage: assign({
+				messages: ({ id, messages }, event) => {
+					if (!('index' in event && 'content' in event) || !id) return messages;
+					const results = messages.map((message, index) => {
+						if (index !== event.index) return message;
+						return {
+							...message,
+							content: event.content
+						};
+					});
+					chatList.updateMessages(id, results);
+					return results;
+				}
 			}),
 			deleteMessage: assign({
 				messages: ({ id, messages }, event) => {
