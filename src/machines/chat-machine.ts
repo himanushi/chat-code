@@ -36,6 +36,7 @@ type Events =
 	| { type: 'RESET' }
 	| { type: 'ADD_MESSAGES'; messages: ChatCompletionRequestMessage[] }
 	| { type: 'DELETE_MESSAGE'; index: number }
+	| { type: 'EDIT_MESSAGE'; index: number; content: string }
 	| { type: 'ADD_USAGES'; usages: CreateCompletionResponseUsage[] }
 	| { type: 'SET_USAGES'; usages: CreateCompletionResponseUsage[] }
 	| { type: 'ADD_STREAM_MESSAGE'; streamMessage: string }
@@ -53,6 +54,19 @@ type StreamJson = {
 			finish_reason: 'stop' | null;
 		}
 	];
+};
+
+const errorMessage = (error: any) => {
+	toastController
+		.create({
+			message: error,
+			duration: 20000,
+			color: 'danger'
+		})
+		.then((toast) => {
+			toast.onclick = () => toast.dismiss();
+			toast.present();
+		});
 };
 
 const id = 'chat';
@@ -74,6 +88,7 @@ export const chatMachine = createMachine(
 		},
 		initial: 'idle',
 		on: {
+			EDIT_MESSAGE: { actions: 'editMessage' },
 			DELETE_MESSAGE: { actions: 'deleteMessage' },
 			SET_ID: { actions: 'setId', target: 'initializing' },
 			SET_API_TOKEN: { actions: 'setApiKey' },
@@ -147,23 +162,44 @@ export const chatMachine = createMachine(
 							}
 
 							(async () => {
-								// eslint-disable-next-line @typescript-eslint/no-unused-vars
-								const messages = contextMessages.map(({ timestamp, ...message }) => message);
-								const completion = await fetch('https://api.openai.com/v1/chat/completions', {
-									headers: {
-										'Content-Type': 'application/json',
-										Authorization: `Bearer ${apiKey}`
-									},
-									method: 'POST',
-									body: JSON.stringify({
-										messages: conversationMode ? messages : messages.slice(-1),
-										model: model,
-										stream: true,
-										temperature: temperature ?? 1,
-										top_p: topP ?? 1,
-										...(maxTokens ? { max_tokens: maxTokens } : {})
-									})
-								});
+								// Timeout to abort the request
+								let ready = false;
+								const controller = new AbortController();
+
+								setTimeout(() => {
+									if (!ready) controller.abort();
+								}, 8000);
+
+								let completion: Response | undefined;
+								try {
+									// eslint-disable-next-line @typescript-eslint/no-unused-vars
+									const messages = contextMessages.map(({ timestamp, ...message }) => message);
+									completion = await fetch('https://api.openai.com/v1/chat/completions', {
+										headers: {
+											'Content-Type': 'application/json',
+											Authorization: `Bearer ${apiKey}`
+										},
+										method: 'POST',
+										body: JSON.stringify({
+											messages: conversationMode ? messages : messages.slice(-1),
+											model: model,
+											stream: true,
+											temperature: temperature ?? 1,
+											top_p: topP ?? 1,
+											...(maxTokens ? { max_tokens: maxTokens } : {})
+										}),
+										signal: controller.signal
+									});
+									ready = true;
+								} catch (error: any) {
+									let message = 'Error connecting to OpenAI.';
+									if (error.name === 'AbortError') message = 'Request timed out.';
+									errorMessage(message);
+									callback('READY');
+									return;
+								}
+
+								if (!completion) return callback('READY');
 
 								const reader = completion.body?.getReader();
 
@@ -176,16 +212,7 @@ export const chatMachine = createMachine(
 										message = 'You do not have permission to reference the model.';
 									else if (completion.status === 429)
 										message = 'Too many requests. Please try again later.';
-									toastController
-										.create({
-											message: `${completion.status}: ${message}`,
-											duration: 20000,
-											color: 'danger'
-										})
-										.then((toast) => {
-											toast.onclick = () => toast.dismiss();
-											toast.present();
-										});
+									errorMessage(`${completion.status}: ${message}`);
 									callback('READY');
 									return;
 								}
@@ -215,8 +242,8 @@ export const chatMachine = createMachine(
 										return read();
 									};
 									await read();
-								} catch (e) {
-									console.error(e);
+								} catch (error) {
+									errorMessage(error);
 								}
 
 								reader.releaseLock();
@@ -255,6 +282,20 @@ export const chatMachine = createMachine(
 			}),
 			setTopP: assign({
 				topP: (_, event) => ('topP' in event ? event.topP : 1)
+			}),
+			editMessage: assign({
+				messages: ({ id, messages }, event) => {
+					if (!('index' in event && 'content' in event) || !id) return messages;
+					const results = messages.map((message, index) => {
+						if (index !== event.index) return message;
+						return {
+							...message,
+							content: event.content
+						};
+					});
+					chatList.updateMessages(id, results);
+					return results;
+				}
 			}),
 			deleteMessage: assign({
 				messages: ({ id, messages }, event) => {

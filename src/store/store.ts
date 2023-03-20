@@ -4,7 +4,7 @@ import { Preferences } from '@capacitor/preferences';
 export const store = {
 	async get<T>(key: string) {
 		const ret = await Preferences.get({ key });
-		if (ret.value) {
+		if (ret.value && ret.value !== 'undefined') {
 			return JSON.parse(ret.value) as T;
 		}
 	},
