@@ -41,7 +41,7 @@
 					editing = !editing;
 				}}
 			>
-				<Icon name="edit_note" size="s" />
+				<Icon name="edit" size="s" />
 			</ion-button>
 			<ion-button
 				color="danger"
@@ -101,7 +101,7 @@
 			<ion-label class="ion-text-wrap text-select">
 				<ion-text>
 					{#each message.content.split('\n') as content}
-						{content.replaceAll(' ', '\u00a0')}<br />
+						{content.replaceAll(/\s/g, '\u00a0')}<br />
 					{/each}
 				</ion-text>
 			</ion-label>
