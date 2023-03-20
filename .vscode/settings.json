@@ -17,12 +17,7 @@
 	],
 	"eslint.validate": ["javascript", "typescript", "svelte"],
 	"stylelint.validate": ["css", "postcss", "svelte", "scss"],
-	"cSpell.words": [
-		"himanushi",
-		"OPENAI",
-		"searchbar",
-		"xstate"
-	],
+	"cSpell.words": ["himanushi", "OPENAI", "searchbar", "xstate"],
 
 	// ref: https://github.com/sveltejs/language-tools/issues/650#issuecomment-1181354795
 	"svelte.plugin.svelte.compilerWarnings": {

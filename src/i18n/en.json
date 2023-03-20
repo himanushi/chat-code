@@ -4,6 +4,17 @@
 		"openai_settings": "OpenAI settings",
 		"theme_settings": "Theme settings"
 	},
+	"message_templates": {
+		"no_templates": "None",
+		"reset_button_description": "[Reset templates]<br>Do not use templates.",
+		"add_button_description": "[Create template]<br>Create a new template.If a template is already selected, it will be automatically added to the beginning of the text. If conversation mode is ON, it will only be added to the first message, but if OFF, it will be added every time.",
+		"edit_button_description": "[Edit template]<br>Edit the currently selected template.",
+		"delete_button_description": "[Delete template]<br>Delete the currently selected template.",
+		"add_title": "Create",
+		"edit_title": "Update",
+		"modal_title": "Title",
+		"modal_message": "Template"
+	},
 	"openai_api_settings": {
 		"title": "OpenAI settings",
 		"api_key": "API Key",
