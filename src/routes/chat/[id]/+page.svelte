@@ -12,12 +12,24 @@
 	import { _ } from 'svelte-i18n';
 	import type { Components } from '@ionic/core';
 	import { calcCurrency } from '~/lib/calcCurrency';
+	import MessageTemplatesToolbar from './message-templates-toolbar.svelte';
+	import { messageTemplates } from '~/store/messageTemplates';
+	import { selectedMessageTemplateIndex } from '~/store/selectedMessageTemplateIndex';
+	import { conversationMode } from '~/store/conversationMode';
 
 	export let data: PageData;
 
 	let message = '';
+	$: preMessage = $messageTemplates[$selectedMessageTemplateIndex]?.message ?? '';
 	const send = () => {
-		chatService.send({ type: 'ADD_MESSAGES', messages: [{ content: message, role: 'user' }] });
+		const content =
+			!$conversationMode || $chatService.context.messages.length === 0
+				? preMessage + '\n' + message
+				: message;
+		chatService.send({
+			type: 'ADD_MESSAGES',
+			messages: [{ content, role: 'user' }]
+		});
 		message = '';
 	};
 
@@ -65,6 +77,7 @@
 	</ion-content>
 	<ion-footer>
 		<Toolbar />
+		<MessageTemplatesToolbar />
 		<ion-toolbar>
 			<ion-textarea
 				class="text-input"
