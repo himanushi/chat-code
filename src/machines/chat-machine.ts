@@ -55,6 +55,19 @@ type StreamJson = {
 	];
 };
 
+const errorMessage = (error: any) => {
+	toastController
+		.create({
+			message: error,
+			duration: 20000,
+			color: 'danger'
+		})
+		.then((toast) => {
+			toast.onclick = () => toast.dismiss();
+			toast.present();
+		});
+};
+
 const id = 'chat';
 
 export const chatMachine = createMachine(
@@ -147,23 +160,44 @@ export const chatMachine = createMachine(
 							}
 
 							(async () => {
-								// eslint-disable-next-line @typescript-eslint/no-unused-vars
-								const messages = contextMessages.map(({ timestamp, ...message }) => message);
-								const completion = await fetch('https://api.openai.com/v1/chat/completions', {
-									headers: {
-										'Content-Type': 'application/json',
-										Authorization: `Bearer ${apiKey}`
-									},
-									method: 'POST',
-									body: JSON.stringify({
-										messages: conversationMode ? messages : messages.slice(-1),
-										model: model,
-										stream: true,
-										temperature: temperature ?? 1,
-										top_p: topP ?? 1,
-										...(maxTokens ? { max_tokens: maxTokens } : {})
-									})
-								});
+								// Timeout to abort the request
+								let ready = false;
+								const controller = new AbortController();
+
+								setTimeout(() => {
+									if (!ready) controller.abort();
+								}, 8000);
+
+								let completion: Response | undefined;
+								try {
+									// eslint-disable-next-line @typescript-eslint/no-unused-vars
+									const messages = contextMessages.map(({ timestamp, ...message }) => message);
+									completion = await fetch('https://api.openai.com/v1/chat/completions', {
+										headers: {
+											'Content-Type': 'application/json',
+											Authorization: `Bearer ${apiKey}`
+										},
+										method: 'POST',
+										body: JSON.stringify({
+											messages: conversationMode ? messages : messages.slice(-1),
+											model: model,
+											stream: true,
+											temperature: temperature ?? 1,
+											top_p: topP ?? 1,
+											...(maxTokens ? { max_tokens: maxTokens } : {})
+										}),
+										signal: controller.signal
+									});
+									ready = true;
+								} catch (error: any) {
+									let message = 'Error connecting to OpenAI.';
+									if (error.name === 'AbortError') message = 'Request timed out.';
+									errorMessage(message);
+									callback('READY');
+									return;
+								}
+
+								if (!completion) return callback('READY');
 
 								const reader = completion.body?.getReader();
 
@@ -176,16 +210,7 @@ export const chatMachine = createMachine(
 										message = 'You do not have permission to reference the model.';
 									else if (completion.status === 429)
 										message = 'Too many requests. Please try again later.';
-									toastController
-										.create({
-											message: `${completion.status}: ${message}`,
-											duration: 20000,
-											color: 'danger'
-										})
-										.then((toast) => {
-											toast.onclick = () => toast.dismiss();
-											toast.present();
-										});
+									errorMessage(`${completion.status}: ${message}`);
 									callback('READY');
 									return;
 								}
@@ -215,8 +240,8 @@ export const chatMachine = createMachine(
 										return read();
 									};
 									await read();
-								} catch (e) {
-									console.error(e);
+								} catch (error) {
+									errorMessage(error);
 								}
 
 								reader.releaseLock();
