@@ -50,8 +50,8 @@
 {#if $apiKey && $chatService}
 	<ion-content bind:this={content}>
 		<ion-list>
-			{#each $chatService.context.messages as message}
-				<ChatItem {message} />
+			{#each $chatService.context.messages as message, index}
+				<ChatItem {message} {index} />
 			{/each}
 			{#if $chatService.context.streamMessage}
 				<ChatItem message={{ content: $chatService.context.streamMessage, role: 'assistant' }} />

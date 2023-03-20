@@ -4,12 +4,14 @@
 	import { isMarkdown } from '~/store/isMarkdown';
 	import { date, time } from 'svelte-i18n';
 	import type { ChatCompletionRequestMessageWithTimeStamp } from '~/store/chatList';
+	import { chatService } from '~/machines/chat-machine';
 
+	export let index = -1;
 	export let message: ChatCompletionRequestMessageWithTimeStamp;
 
-	const itemColor = message.role === 'user' ? 'black' : 'dark-gray';
-	const icon = message.role === 'user' ? 'person' : 'smart_toy';
-	const iconColor = message.role === 'user' ? 'blue' : 'green';
+	$: itemColor = message.role === 'user' ? 'black' : 'dark-gray';
+	$: icon = message.role === 'user' ? 'person' : 'smart_toy';
+	$: iconColor = message.role === 'user' ? 'blue' : 'green';
 
 	$: markedContent = '';
 	$: markdown(message.content, (err, result) => {
@@ -25,6 +27,16 @@
 
 <ion-item color={itemColor} lines="none">
 	<Icon name={icon} color={iconColor} start />
+	<ion-buttons slot="end">
+		{#if index >= 0}
+			<ion-button
+				color="danger"
+				on:click={() => chatService.send({ type: 'DELETE_MESSAGE', index })}
+			>
+				<Icon name="delete" size="s" />
+			</ion-button>
+		{/if}
+	</ion-buttons>
 	{#if message.timestamp}
 		<ion-note class="timestamp" slot="end">
 			{$date(new Date(message.timestamp), { format: 'medium' })}
